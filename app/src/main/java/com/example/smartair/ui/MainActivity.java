@@ -1,7 +1,8 @@
-package com.example.smartair;
+package com.example.smartair.ui;
 
 import android.os.Bundle;
 
+import com.example.smartair.R;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;

@@ -1,6 +1,11 @@
-package com.example.smartair;
+package com.example.smartair.ui.register;
 
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +14,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
+import com.example.smartair.R;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class RegisterProviderFragment extends Fragment {
+public class RegisterParentFragment extends Fragment {
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
@@ -25,7 +27,7 @@ public class RegisterProviderFragment extends Fragment {
     Button btnSubmitRegistration;
     TextView loginPrompt;
 
-    public RegisterProviderFragment() {
+    public RegisterParentFragment() {
     }
 
     @Override
@@ -43,7 +45,7 @@ public class RegisterProviderFragment extends Fragment {
 
         loginPrompt.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireView());
-            navController.navigate(R.id.action_registerProviderFragment_to_loginFragment);
+            navController.navigate(R.id.action_registerParentFragment_to_loginFragment);
         });
 
         btnSubmitRegistration.setOnClickListener(v -> {
@@ -76,7 +78,10 @@ public class RegisterProviderFragment extends Fragment {
                         if (task.isSuccessful()) {
                             Toast.makeText(requireContext(),
                                     "Registration successful", Toast.LENGTH_SHORT).show();
-                            // TODO: goto provider explanation page
+                            Bundle bundle = new Bundle();
+                            bundle.putString("userType", "parent");
+                            NavController navController = Navigation.findNavController(requireView());
+                            navController.navigate(R.id.action_registerParentFragment_to_onboardingFragment, bundle);
                         } else {
                             Toast.makeText(requireContext(),
                                     "Registration failed:" + task.getException().getMessage(),
