@@ -1,6 +1,8 @@
 package com.example.smartair;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,13 +28,19 @@ public class RoleSelectionFragment extends Fragment {
         btnSelectProvider = view.findViewById(R.id.button_select_provider);
 
         btnSelectChild.setOnClickListener(v -> {
-            // TODO: goto child explanation page
+            //goto register child page
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(R.id.action_roleSelectionFragment_to_registerChildFragment);
         });
         btnSelectParent.setOnClickListener(v -> {
-            // TODO: goto parent explanation page
+            //goto register parent page
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(R.id.action_roleSelectionFragment_to_registerParentFragment);
         });
         btnSelectProvider.setOnClickListener(v -> {
-            // TODO: goto provider explanation page
+            //goto register provider age
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(R.id.action_roleSelectionFragment_to_registerProviderFragment);
         });
         return view;
     }

@@ -29,7 +29,7 @@ public class StartFragment extends Fragment {
 
         btnLogin.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireView());
-            navController.navigate(R.id.loginFragment);
+            navController.navigate(R.id.action_startFragment_to_loginFragment);
         });
 
         btnRegister.setOnClickListener(v -> {
