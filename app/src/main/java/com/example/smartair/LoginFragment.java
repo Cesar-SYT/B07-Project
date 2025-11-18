@@ -49,7 +49,7 @@ public class LoginFragment extends Fragment {
             firebaseAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()){
-                            // TODO:goto parent homepage
+                            // TODO: goto parent homepage
                         }
                         else{
                             Toast.makeText(requireContext(), "Invalid email/password", Toast.LENGTH_SHORT).show();
