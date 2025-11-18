@@ -6,9 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -20,6 +23,7 @@ public class RegisterChildFragment extends Fragment {
     EditText editTextEmail;
     EditText editTextPassword;
     Button btnSubmitRegistration;
+    TextView loginPrompt;
 
     public RegisterChildFragment() {
     }
@@ -35,6 +39,12 @@ public class RegisterChildFragment extends Fragment {
         editTextEmail = view.findViewById(R.id.edit_text_email);
         editTextPassword = view.findViewById(R.id.edit_text_password);
         btnSubmitRegistration = view.findViewById(R.id.button_submit_registration);
+        loginPrompt = view.findViewById(R.id.text_view_login_prompt);
+
+        loginPrompt.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(R.id.action_registerChildFragment_to_loginFragment);
+        });
 
         btnSubmitRegistration.setOnClickListener(v -> {
             String name = fullName.getText().toString().trim();
