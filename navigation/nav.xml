@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <!-- Main Menu -->
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.smartair.MainFragment"
+        android:label="Main Menu">
+
+        <action
+            android:id="@+id/action_main_to_records"
+            app:destination="@id/recordsFragment"/>
+
+        <action
+            android:id="@+id/action_main_to_techniqueHelper"
+            app:destination="@id/techniqueHelperFragment"/>
+
+        <action
+            android:id="@+id/action_main_to_inventory"
+            app:destination="@id/inventoryFragment"/>
+
+        <action
+            android:id="@+id/action_main_to_motivation"
+            app:destination="@id/motivationFragment"/>
+    </fragment>
+
+    <!-- Individual Pages -->
+    <fragment
+        android:id="@+id/recordsFragment"
+        android:name="com.example.smartair.RecordsFragment"
+        android:label="Records"/>
+
+    <fragment
+        android:id="@+id/techniqueHelperFragment"
+        android:name="com.example.smartair.TechniqueHelperFragment"
+        android:label="Technique Helper"/>
+
+    <fragment
+        android:id="@+id/inventoryFragment"
+        android:name="com.example.smartair.InventoryFragment"
+        android:label="Inventory"/>
+
+    <fragment
+        android:id="@+id/motivationFragment"
+        android:name="com.example.smartair.MotivationFragment"
+        android:label="Motivation"/>
+</navigation>
