@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="32dp"
-    tools:context=".ui.start.StartFragment">
+    tools:context=".ui.StartFragment">
 
     <!-- Logo: 顶部约束到屏幕顶部，底部约束到登录按钮顶部 -->
     <ImageView
@@ -18,8 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="0.3"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:contentDescription="@string/app_logo" />
+        app:layout_constraintVertical_chainStyle="packed"/>
 
     <!-- 登录按钮: 顶部在Logo下方，底部在注册按钮上方 -->
     <Button
