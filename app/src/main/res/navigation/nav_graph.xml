@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/startFragment"
-        android:name="com.example.smartair.ui.start.StartFragment"
+        android:name="com.example.smartair.ui.StartFragment"
         android:label="fragment_start"
         tools:layout="@layout/fragment_start" >
 
@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.smartair.ui.login.LoginFragment"
+        android:name="com.example.smartair.ui.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <!-- 登录成功后, 应该去往主页(HomePage), 这里暂时留空 -->
@@ -35,7 +35,7 @@
     <!-- role selection -->
     <fragment
         android:id="@+id/roleSelectionFragment"
-        android:name="com.example.smartair.ui.register.RoleSelectionFragment"
+        android:name="com.example.smartair.ui.RoleSelectionFragment"
         android:label="fragment_role_selection"
         tools:layout="@layout/fragment_role_selection" >
 
@@ -59,6 +59,9 @@
         <action
             android:id="@+id/action_registerParentFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_registerParentFragment_to_onboardingFragment"
+            app:destination="@id/onboardingFragment" />
     </fragment>
 
     <!-- Child register -->
@@ -70,6 +73,9 @@
         <action
             android:id="@+id/action_registerChildFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_registerChildFragment_to_onboardingFragment"
+            app:destination="@id/onboardingFragment" />
     </fragment>
 
     <!-- Provider register -->
@@ -81,6 +87,22 @@
         <action
             android:id="@+id/action_registerProviderFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_registerProviderFragment_to_onboardingFragment"
+            app:destination="@id/onboardingFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.example.smartair.ui.onboarding.OnboardingFragment"
+        android:label="Onboarding"
+        tools:layout="@layout/fragment_onboarding">
+
+        <action
+            android:id="@+id/action_onboardingFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+
+    </fragment>
+
 
 </navigation>

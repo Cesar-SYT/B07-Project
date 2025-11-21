@@ -5,7 +5,6 @@ import android.widget.Toast;
 public class LoginPresenter {
     LoginView loginview;
     LoginModel loginmodel;
-    LoginCallback logincallback;
 
     public LoginPresenter(LoginView view, LoginModel model) {
         this.loginview = view;
@@ -13,15 +12,17 @@ public class LoginPresenter {
     }
 
     public void onLoginClicked(String email, String password) {
-        // 验证逻辑
-        // 调用 model.login(...)
+
         if (email.isEmpty()) {
             loginview.showEmailEmpty("Please fill in your email");
             return;
-        } else if (password.isEmpty()) {
+        }
+
+        if (password.isEmpty()) {
             loginview.showPasswordEmpty("Please fill in your password");
             return;
         }
+
         loginmodel.login(email, password, new LoginCallback() {
             @Override
             public void onSuccess() {
@@ -32,7 +33,6 @@ public class LoginPresenter {
             public void onFailure(String errorMessage) {
                 loginview.showLoginFailure(errorMessage);
             }
-    });
+        }.toString());
     }
 }
-
