@@ -3,16 +3,20 @@ package com.example.smartair.ui;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartair.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginFragment extends Fragment {
 
@@ -21,6 +25,8 @@ public class LoginFragment extends Fragment {
     EditText editEmail;
     EditText editLoginPassword;
     Button btnLogin;
+    TextView textNoAccount;
+    TextView textForgotPasswd;
 
     public LoginFragment() {
     }
@@ -35,16 +41,40 @@ public class LoginFragment extends Fragment {
         editEmail = view.findViewById(R.id.edit_text_email);
         editLoginPassword = view.findViewById(R.id.edit_text_password);
         btnLogin = view.findViewById(R.id.button_login);
+        textNoAccount = view.findViewById(R.id.text_view_register_prompt);
+        textForgotPasswd = view.findViewById(R.id.text_view_forgot_password);
+
+        textNoAccount.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(view);
+            navController.navigate(R.id.action_loginFragment_to_roleSelectionFragment);
+        });
+
+        textForgotPasswd.setOnClickListener(v -> {
+            String email = editEmail.getText().toString().trim();
+            if (email.isEmpty()){
+                Toast.makeText(requireContext(), "Please enter your email first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            firebaseAuth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()){
+                            Toast.makeText(requireContext(), "Reset link sent to your email", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Toast.makeText(requireContext(), "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
 
         btnLogin.setOnClickListener(v -> {
             String email = editEmail.getText().toString().trim();
             String password = editLoginPassword.getText().toString().trim();
             if (email.isEmpty()){
-                Toast.makeText(requireContext(), "Please fill in your email", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Please enter your email", Toast.LENGTH_SHORT).show();
                 return;
             }
             else if (password.isEmpty()){
-                Toast.makeText(requireContext(), "Please fill in your password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Please enter your password", Toast.LENGTH_SHORT).show();
                 return;
             }
             firebaseAuth.signInWithEmailAndPassword(email, password)

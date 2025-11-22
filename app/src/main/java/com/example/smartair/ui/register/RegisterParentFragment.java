@@ -44,7 +44,7 @@ public class RegisterParentFragment extends Fragment {
         loginPrompt = view.findViewById(R.id.text_view_login_prompt);
 
         loginPrompt.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(requireView());
+            NavController navController = Navigation.findNavController(view);
             navController.navigate(R.id.action_registerParentFragment_to_loginFragment);
         });
 
@@ -80,7 +80,7 @@ public class RegisterParentFragment extends Fragment {
                                     "Registration successful", Toast.LENGTH_SHORT).show();
                             Bundle bundle = new Bundle();
                             bundle.putString("userType", "parent");
-                            NavController navController = Navigation.findNavController(requireView());
+                            NavController navController = Navigation.findNavController(view);
                             navController.navigate(R.id.action_registerParentFragment_to_onboardingFragment, bundle);
                         } else {
                             Toast.makeText(requireContext(),

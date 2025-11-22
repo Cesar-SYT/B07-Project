@@ -68,7 +68,7 @@
             android:id="@+id/text_view_forgot_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(Forgot Password?)"
+            android:text="Forgot password? We’ll send you a reset link."
             android:layout_marginTop="8dp"
             android:padding="4dp"
             app:layout_constraintEnd_toEndOf="parent"

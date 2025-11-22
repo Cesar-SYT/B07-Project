@@ -29,17 +29,17 @@ public class RoleSelectionFragment extends Fragment {
 
         btnSelectChild.setOnClickListener(v -> {
             //goto register child page
-            NavController navController = Navigation.findNavController(requireView());
+            NavController navController = Navigation.findNavController(view);
             navController.navigate(R.id.action_roleSelectionFragment_to_registerChildFragment);
         });
         btnSelectParent.setOnClickListener(v -> {
             //goto register parent page
-            NavController navController = Navigation.findNavController(requireView());
+            NavController navController = Navigation.findNavController(view);
             navController.navigate(R.id.action_roleSelectionFragment_to_registerParentFragment);
         });
         btnSelectProvider.setOnClickListener(v -> {
             //goto register provider age
-            NavController navController = Navigation.findNavController(requireView());
+            NavController navController = Navigation.findNavController(view);
             navController.navigate(R.id.action_roleSelectionFragment_to_registerProviderFragment);
         });
         return view;

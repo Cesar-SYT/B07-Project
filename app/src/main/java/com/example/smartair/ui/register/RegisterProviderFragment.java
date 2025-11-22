@@ -43,7 +43,7 @@ public class RegisterProviderFragment extends Fragment {
         loginPrompt = view.findViewById(R.id.text_view_login_prompt);
 
         loginPrompt.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(requireView());
+            NavController navController = Navigation.findNavController(view);
             navController.navigate(R.id.action_registerProviderFragment_to_loginFragment);
         });
 
@@ -79,7 +79,7 @@ public class RegisterProviderFragment extends Fragment {
                                     "Registration successful", Toast.LENGTH_SHORT).show();
                             Bundle bundle = new Bundle();
                             bundle.putString("userType", "provider");
-                            NavController navController = Navigation.findNavController(requireView());
+                            NavController navController = Navigation.findNavController(view);
                             navController.navigate(R.id.action_registerProviderFragment_to_onboardingFragment, bundle);
                         } else {
                             Toast.makeText(requireContext(),
