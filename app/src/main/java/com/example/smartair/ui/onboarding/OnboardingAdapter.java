@@ -1,8 +1,11 @@
 package com.example.smartair.ui.onboarding;
 
+import static com.google.android.gms.common.api.internal.LifecycleCallback.getFragment;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.List;
 
@@ -21,7 +24,13 @@ public class OnboardingAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         boolean isLastScreen = position == screens.size() - 1;
-        return OnboardingPageFragment.newInstance(screens.get(position), position + 1, screens.size(), isLastScreen, onFinished);
+        return OnboardingPageFragment.newInstance(
+                screens.get(position),
+                position,
+                screens.size(),
+                isLastScreen,
+                onFinished
+        );
     }
 
     @Override

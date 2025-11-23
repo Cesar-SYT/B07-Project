@@ -45,9 +45,11 @@ public class OnboardingFragment extends Fragment {
     private List<OnboardingScreen> getOnboardingScreens(String userType) {
         if ("child".equals(userType)) {
             return OnboardingRepo.getChildOnboardingScreens();
-        } else if ("parent".equals(userType)) {
+        }
+        else if ("parent".equals(userType)) {
             return OnboardingRepo.getParentOnboardingScreens();
-        } else {
+        }
+        else {
             return OnboardingRepo.getProviderOnboardingScreens();
         }
     }

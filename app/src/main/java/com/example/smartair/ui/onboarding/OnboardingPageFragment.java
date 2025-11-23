@@ -83,8 +83,13 @@ public class OnboardingPageFragment extends Fragment {
                 if (onFinished != null) {
                     onFinished.run();
                 }
-            } else {
-                ((ViewPager2) requireView().getParent().getParent()).setCurrentItem(position);
+            }
+            else {
+                ViewPager2 viewPager = requireParentFragment()
+                        .requireView()
+                        .findViewById(R.id.onboarding_view_pager);
+
+                viewPager.setCurrentItem(position + 1, true);
             }
         });
     }
