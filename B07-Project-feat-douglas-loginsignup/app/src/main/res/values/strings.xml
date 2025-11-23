@@ -43,4 +43,15 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="medicine">Medicine</string>
+    <string name="recording">Recording</string>
+    <string name="techhelper">Technique Helper</string>
+    <string name="Inventory">Inventory</string>   <!-- 注意大写 I，要和 XML 里一致 -->
+    <string name="motivation">Motivation</string>
+
+    <!-- RecordsActivity -->
+    <string name="medicinetype">Medicine type</string>
+    <string name="rescue">Rescue</string>
+    <string name="controller">Controller</string>
+    <string name="dose">Dose</string>
 </resources>

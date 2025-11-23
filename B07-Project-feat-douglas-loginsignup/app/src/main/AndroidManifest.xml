@@ -22,6 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".r3.RecordsActivity" />
+        <activity android:name=".r3.TechniqueHelperActivity" />
+        <activity android:name=".r3.InventoryActivity" />
+        <activity android:name=".r3.MotivationActivity" />
     </application>
 
 </manifest>
