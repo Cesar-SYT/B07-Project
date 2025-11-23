@@ -14,7 +14,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.smartair.R;
+import com.example.smartair.ui.data.User;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterProviderFragment extends Fragment {
 
@@ -77,6 +79,13 @@ public class RegisterProviderFragment extends Fragment {
                         if (task.isSuccessful()) {
                             Toast.makeText(requireContext(),
                                     "Registration successful", Toast.LENGTH_SHORT).show();
+                            String uid = firebaseAuth.getCurrentUser().getUid();
+                            User myuser = new User(uid, name, email, "provider");
+                            FirebaseDatabase.getInstance
+                                            ("https://smart-air-61888-default-rtdb.firebaseio.com/").getReference("users")
+                                    .child(uid)
+                                    .setValue(myuser);
+
                             Bundle bundle = new Bundle();
                             bundle.putString("userType", "provider");
                             NavController navController = Navigation.findNavController(view);

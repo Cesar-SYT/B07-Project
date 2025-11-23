@@ -45,7 +45,7 @@ public class LoginFragment extends Fragment {
         textForgotPasswd = view.findViewById(R.id.text_view_forgot_password);
 
         textNoAccount.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(view);
+            NavController navController = Navigation.findNavController(v);
             navController.navigate(R.id.action_loginFragment_to_roleSelectionFragment);
         });
 

@@ -30,12 +30,12 @@ public class StartFragment extends Fragment {
         btnRegister = view.findViewById(R.id.button_register);
 
         btnLogin.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(view);
+            NavController navController = Navigation.findNavController(v);
             navController.navigate(R.id.action_startFragment_to_loginFragment);
         });
 
         btnRegister.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(view);
+            NavController navController = Navigation.findNavController(v);
             navController.navigate(R.id.action_startFragment_to_roleSelectionFragment);
         });
         return view;

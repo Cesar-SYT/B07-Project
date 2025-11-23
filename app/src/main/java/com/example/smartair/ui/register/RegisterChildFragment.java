@@ -14,7 +14,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.smartair.R;
+import com.example.smartair.ui.data.User;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterChildFragment extends Fragment {
 
@@ -32,7 +34,7 @@ public class RegisterChildFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_register_parent, container, false);
+        View view = inflater.inflate(R.layout.fragment_register_child, container, false);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -43,7 +45,7 @@ public class RegisterChildFragment extends Fragment {
         loginPrompt = view.findViewById(R.id.text_view_login_prompt);
 
         loginPrompt.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(view);
+            NavController navController = Navigation.findNavController(v);
             navController.navigate(R.id.action_registerChildFragment_to_loginFragment);
         });
 
@@ -77,11 +79,19 @@ public class RegisterChildFragment extends Fragment {
                         if (task.isSuccessful()) {
                             Toast.makeText(requireContext(),
                                     "Registration successful", Toast.LENGTH_SHORT).show();
+                            String uid = firebaseAuth.getCurrentUser().getUid();
+                            User myuser = new User(uid, name, email, "child");
+                            FirebaseDatabase.getInstance
+                                    ("https://smart-air-61888-default-rtdb.firebaseio.com/").getReference("users")
+                                    .child(uid)
+                                    .setValue(myuser);
+
                             Bundle bundle = new Bundle();
                             bundle.putString("userType", "child");
-                            NavController navController = Navigation.findNavController(view);
+                            NavController navController = Navigation.findNavController(v);
                             navController.navigate(R.id.action_registerChildFragment_to_onboardingFragment, bundle);
-                        } else {
+                        }
+                        else {
                             Toast.makeText(requireContext(),
                                     "Registration failed:" + task.getException().getMessage(),
                                     Toast.LENGTH_LONG).show();
