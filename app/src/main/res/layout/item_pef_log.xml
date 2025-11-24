@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="?attr/selectableItemBackground">
+
+    <!-- Date Column -->
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:text="2023-10-27 14:30"
+        android:textSize="14sp"
+        android:gravity="center_vertical"
+        android:textColor="#333333"/>
+
+    <!-- PEF Value Column -->
+    <TextView
+        android:id="@+id/tv_pef_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="450 L/min"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="#333333"/>
+
+    <!-- Zone Column -->
+    <TextView
+        android:id="@+id/tv_zone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:text="Green"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:padding="6dp"
+        android:background="@drawable/bg_zone_green" />
+
+</LinearLayout>

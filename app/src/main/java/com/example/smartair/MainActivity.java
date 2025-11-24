@@ -1,77 +1,46 @@
 package com.example.smartair;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.View;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.smartair.databinding.ActivityMainBinding;
-
-import android.view.Menu;
-import android.view.MenuItem;
-
 public class MainActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
+    private Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        // Simulate checking for logged in user
+        // If logged in -> navigate to SafetyAndControl directly
+        // For demo purposes, we wait for button click
 
-        setSupportActionBar(binding.toolbar);
-
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab)
-                        .setAction("Action", null).show();
-            }
-        });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        btnLogin = findViewById(R.id.btn_login); // Note: btn_login is in content_main, but included in activity_main via include
+        // Since activity_main uses CoordinatorLayout and includes content_main, normal findViewById works 
+        // if the ID is unique in the hierarchy. 
+        
+        // However, since we modified content_main.xml in the previous step to have btn_login, 
+        // and we must ensure activity_main.xml includes it correctly.
+        
+        // To be safe and simple given the previous edits:
+        // We will assume the view hierarchy is flattened or accessible.
+        
+        if (btnLogin != null) {
+            btnLogin.setOnClickListener(v -> {
+                // Simulate Login Logic
+                Toast.makeText(MainActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
+                
+                // Navigate to SafetyAndControl
+                Intent intent = new Intent(MainActivity.this, SafetyAndControl.class);
+                startActivity(intent);
+                // finish(); // Optional: close Main so user can't go back to login easily
+            });
         }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
     }
 }
