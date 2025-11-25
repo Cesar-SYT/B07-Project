@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.example.smartair.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginFragment extends Fragment {
 
@@ -80,7 +82,24 @@ public class LoginFragment extends Fragment {
             firebaseAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()){
-                            // TODO: goto parent homepage
+                            // sign in successful, goto different homepage based on userType
+                            String uid = firebaseAuth.getCurrentUser().getUid();
+                            DatabaseReference ref = FirebaseDatabase.getInstance()
+                                    .getReference("users")
+                                    .child(uid);
+                            ref.get().addOnSuccessListener(snapshot -> {
+                                String usertype = snapshot.child("userType").getValue(String.class);
+
+                                if (usertype.equals("parent")) {
+                                    // TODO: goto parent homepage
+                                }
+                                else if (usertype.equals("child")){
+                                    // TODO: goto child homepage
+                                }
+                                else{
+                                    // TODO: goto provider homepage
+                                }
+                            });
                         }
                         else{
                             Toast.makeText(requireContext(), "Invalid email/password", Toast.LENGTH_SHORT).show();
