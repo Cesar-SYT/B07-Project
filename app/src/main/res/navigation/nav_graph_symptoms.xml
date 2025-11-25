@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_symptoms"
+    app:startDestination="@id/symptomHistoryFragment">
+
+    <!-- 每日检查/记录页面 -->
+    <fragment
+        android:id="@+id/symptomCheckinFragment"
+        android:name="com.example.smartair.ui.symptoms.SymptomCheckinFragment"
+        android:label="Symptom Check-in"
+        tools:layout="@layout/symptom_checkin_fragment">
+        <!-- 保存成功后可以返回历史记录页 -->
+        <action
+            android:id="@+id/action_symptomCheckinFragment_to_symptomHistoryFragment"
+            app:destination="@id/symptomHistoryFragment"
+            app:popUpTo="@id/symptomHistoryFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 历史记录页面 -->
+    <fragment
+        android:id="@+id/symptomHistoryFragment"
+        android:name="com.example.smartair.ui.symptoms.SymptomHistoryFragment"
+        android:label="Symptom History"
+
+        tools:layout="@layout/symptom_history_fragment">
+        <!-- 从历史记录页可以跳转到导出报告页 -->
+        <action
+            android:id="@+id/action_symptomHistoryFragment_to_exportReportFragment"
+            app:destination="@id/exportReportFragment" />
+        <!-- 从历史记录页也可以跳转到每日记录页 -->
+        <action
+            android:id="@+id/action_symptomHistoryFragment_to_symptomCheckinFragment"
+            app:destination="@id/symptomCheckinFragment" />
+    </fragment>
+
+    <!-- 导出报告页面 -->
+    <fragment
+        android:id="@+id/exportReportFragment"
+        android:name="com.example.smartair.ui.symptoms.ExportReportFragment"
+        android:label="Export Report"
+        tools:layout="@layout/symptom_export_report_fragment" />
+    <!-- 导出成功后可以返回历史记录页 -->
+    <!-- (可以添加返回的 action, 或者直接使用系统返回键) -->
+
+</navigation>
