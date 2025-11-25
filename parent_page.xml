@@ -13,12 +13,13 @@
         android:id="@+id/parentTopBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="#ECEFF1"
         android:orientation="horizontal"
         android:padding="12dp"
-        android:background="#ECEFF1"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/scrollParentHome"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/txtParentTitle"
@@ -27,14 +28,23 @@
             android:layout_weight="1"
             android:text="SMART AIR – Parent"
             android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtCurrentChildName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:text="Child: Alex"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <Spinner
             android:id="@+id/spinnerChildSelector"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:entries="@array/dummy_children"
-            tools:ignore="HardcodedText"/>
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
