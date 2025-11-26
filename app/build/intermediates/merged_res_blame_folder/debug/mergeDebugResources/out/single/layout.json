@@ -1,0 +1,42 @@
+[
+    {
+        "merged": "com.example.smartair.app-mergeDebugResources-55:/layout/fragment_role_selection.xml",
+        "source": "com.example.smartair.app-main-58:/layout/fragment_role_selection.xml"
+    },
+    {
+        "merged": "com.example.smartair.app-mergeDebugResources-55:/layout/fragment_register_child.xml",
+        "source": "com.example.smartair.app-main-58:/layout/fragment_register_child.xml"
+    },
+    {
+        "merged": "com.example.smartair.app-mergeDebugResources-55:/layout/item_onboarding_page.xml",
+        "source": "com.example.smartair.app-main-58:/layout/item_onboarding_page.xml"
+    },
+    {
+        "merged": "com.example.smartair.app-mergeDebugResources-55:/layout/fragment_start.xml",
+        "source": "com.example.smartair.app-main-58:/layout/fragment_start.xml"
+    },
+    {
+        "merged": "com.example.smartair.app-mergeDebugResources-55:/layout/fragment_login.xml",
+        "source": "com.example.smartair.app-main-58:/layout/fragment_login.xml"
+    },
+    {
+        "merged": "com.example.smartair.app-mergeDebugResources-55:/layout/fragment_register_parent.xml",
+        "source": "com.example.smartair.app-main-58:/layout/fragment_register_parent.xml"
+    },
+    {
+        "merged": "com.example.smartair.app-mergeDebugResources-55:/layout/fragment_onboarding.xml",
+        "source": "com.example.smartair.app-main-58:/layout/fragment_onboarding.xml"
+    },
+    {
+        "merged": "com.example.smartair.app-mergeDebugResources-55:/layout/content_main.xml",
+        "source": "com.example.smartair.app-main-58:/layout/content_main.xml"
+    },
+    {
+        "merged": "com.example.smartair.app-mergeDebugResources-55:/layout/fragment_register_provider.xml",
+        "source": "com.example.smartair.app-main-58:/layout/fragment_register_provider.xml"
+    },
+    {
+        "merged": "com.example.smartair.app-mergeDebugResources-55:/layout/activity_main.xml",
+        "source": "com.example.smartair.app-main-58:/layout/activity_main.xml"
+    }
+]

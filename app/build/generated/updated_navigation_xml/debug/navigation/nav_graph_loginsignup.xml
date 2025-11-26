@@ -1,0 +1,112 @@
+<navigation
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/nav_graph_loginsignup"
+app:startDestination="@id/startFragment" >
+<fragment
+    android:id="@+id/startFragment"
+    android:name="com.example.smartair.ui.StartFragment"
+    android:label="fragment_start"
+    tools:layout="@layout/fragment_start" >
+
+    <action
+        android:id="@+id/action_startFragment_to_loginFragment"
+        app:destination="@id/loginFragment" />
+    <action
+        android:id="@+id/action_startFragment_to_roleSelectionFragment"
+        app:destination="@id/roleSelectionFragment" />
+
+</fragment>
+<fragment
+    android:id="@+id/loginFragment"
+    android:name="com.example.smartair.ui.LoginFragment"
+    android:label="fragment_login"
+    tools:layout="@layout/fragment_login" >
+
+    <!-- 登录成功后, 应该去往主页(HomePage), 这里暂时留空 -->
+
+    <action
+        android:id="@+id/action_loginFragment_to_roleSelectionFragment"
+        app:destination="@id/roleSelectionFragment" />
+
+</fragment>
+
+<!-- role selection -->
+<fragment
+    android:id="@+id/roleSelectionFragment"
+    android:name="com.example.smartair.ui.RoleSelectionFragment"
+    android:label="fragment_role_selection"
+    tools:layout="@layout/fragment_role_selection" >
+
+    <action
+        android:id="@+id/action_roleSelectionFragment_to_registerParentFragment"
+        app:destination="@id/registerParentFragment" />
+    <action
+        android:id="@+id/action_roleSelectionFragment_to_registerChildFragment"
+        app:destination="@id/registerChildFragment" />
+    <action
+        android:id="@+id/action_roleSelectionFragment_to_registerProviderFragment"
+        app:destination="@id/registerProviderFragment" />
+
+</fragment>
+
+<!-- Parent register -->
+<fragment
+    android:id="@+id/registerParentFragment"
+    android:name="com.example.smartair.ui.register.RegisterParentFragment"
+    android:label="fragment_register_parent"
+    tools:layout="@layout/fragment_register_parent" >
+
+    <action
+        android:id="@+id/action_registerParentFragment_to_loginFragment"
+        app:destination="@id/loginFragment" />
+    <action
+        android:id="@+id/action_registerParentFragment_to_onboardingFragment"
+        app:destination="@id/onboardingFragment" />
+
+</fragment>
+
+<!-- Child register -->
+<fragment
+    android:id="@+id/registerChildFragment"
+    android:name="com.example.smartair.ui.register.RegisterChildFragment"
+    android:label="fragment_register_child"
+    tools:layout="@layout/fragment_register_child" >
+
+    <action
+        android:id="@+id/action_registerChildFragment_to_loginFragment"
+        app:destination="@id/loginFragment" />
+    <action
+        android:id="@+id/action_registerChildFragment_to_onboardingFragment"
+        app:destination="@id/onboardingFragment" />
+
+</fragment>
+
+<!-- Provider register -->
+<fragment
+    android:id="@+id/registerProviderFragment"
+    android:name="com.example.smartair.ui.register.RegisterProviderFragment"
+    android:label="fragment_register_provider"
+    tools:layout="@layout/fragment_register_provider" >
+
+    <action
+        android:id="@+id/action_registerProviderFragment_to_loginFragment"
+        app:destination="@id/loginFragment" />
+    <action
+        android:id="@+id/action_registerProviderFragment_to_onboardingFragment"
+        app:destination="@id/onboardingFragment" />
+
+</fragment>
+<fragment
+    android:id="@+id/onboardingFragment"
+    android:name="com.example.smartair.ui.onboarding.OnboardingFragment"
+    android:label="Onboarding"
+    tools:layout="@layout/fragment_onboarding" >
+
+    <action
+        android:id="@+id/action_onboardingFragment_to_loginFragment"
+        app:destination="@id/loginFragment" />
+
+</fragment>
+</navigation>

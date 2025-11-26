@@ -4,10 +4,12 @@ public abstract class User {
     private final String id;
     private String displayName;
     private final UserRole role;
-    protected User(String displayName, UserRole role) {
-        this.id = UUID.randomUUID().toString();
+	private boolean hasBeenOnboarding;
+    protected User(String id, String displayName, UserRole role) {
+        this.id = id;
         this.displayName = displayName;
         this.role = role;
+		this.hasBeenOnboarding = false;
     }
     public String getId() {
         return id;

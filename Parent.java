@@ -5,8 +5,8 @@ import java.util.List;
 public class Parent extends User{
     private final List<Child> children = new ArrayList<>();
 
-    public Parent(String displayName) {
-        super(displayName, UserRole.PARENT);
+    public Parent(String id, String displayName) {
+        super(id, displayName, UserRole.PARENT);
     }
 
     public void linkChild(Child child) {
