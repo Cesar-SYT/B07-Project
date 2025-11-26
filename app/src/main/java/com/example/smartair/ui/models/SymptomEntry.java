@@ -1,4 +1,4 @@
-package com.example.smartair.ui.symptoms;
+package com.example.smartair.ui.models;
 
 import java.util.List;
 
