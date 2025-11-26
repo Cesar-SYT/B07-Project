@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".ui.symptoms.SymptomCheckinFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/text_view_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Daily Symptom Checkin"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 问题1: 夜间睡眠 -->
+        <TextView
+            android:id="@+id/text_view_q1_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Did you woke up early in the night？"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_view_title" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_q1_sleep"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:singleSelection="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_view_q1_title">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_sleep_good"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No. I slept well. 😊" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_sleep_bad"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="I was awaken by cough. 😟" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- 问题2: 活动能力 -->
+        <TextView
+            android:id="@+id/text_view_q2_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="How's your activity during the day？"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chip_group_q1_sleep" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_q2_activity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:singleSelection="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_view_q2_title">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_activity_normal"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Good 👍" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_activity_limited"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A bit challenging 😕" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_activity_hard"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Very difficult 😩" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- 问题3: 咳嗽/喘息 -->
+        <TextView
+            android:id="@+id/text_view_q3_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Did you cough/wheeze today？"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chip_group_q2_activity" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_q3_cough"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:singleSelection="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_view_q3_title">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_cough_no"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No 😄" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_cough_yes"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yes 😷" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- 触发因素部分 (默认隐藏, 当有症状时设为可见) -->
+        <LinearLayout
+            android:id="@+id/layout_triggers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="32dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@id/chip_group_q3_cough"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="What might be the trigger？(Multiple choice)"
+                android:textSize="18sp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_triggers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.chip.Chip style="@style/Widget.MaterialComponents.Chip.Filter" android:text="🏃 exercise" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                <com.google.android.material.chip.Chip style="@style/Widget.MaterialComponents.Chip.Filter" android:text="❄️ cold air" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                <com.google.android.material.chip.Chip style="@style/Widget.MaterialComponents.Chip.Filter" android:text="🐕 pets" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                <com.google.android.material.chip.Chip style="@style/Widget.MaterialComponents.Chip.Filter" android:text="🚬 smoke" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                <com.google.android.material.chip.Chip style="@style/Widget.MaterialComponents.Chip.Filter" android:text="🤧 illness" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                <com.google.android.material.chip.Chip style="@style/Widget.MaterialComponents.Chip.Filter" android:text="🧴 perfume/cleaners/strong odors" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Other triggers">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_other_trigger"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:paddingVertical="12dp"
+            android:text="Save"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/layout_triggers"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="24dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
