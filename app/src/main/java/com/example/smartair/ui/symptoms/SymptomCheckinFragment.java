@@ -98,24 +98,39 @@ public class SymptomCheckinFragment extends Fragment {
                         int sleepId = chipSleep.getCheckedChipId();
                         String sleep = null;
                         if (sleepId != View.NO_ID) {
-                            Chip chip = chipSleep.findViewById(sleepId);
-                            sleep = chip.getText().toString();
+                            if (sleepId == R.id.chip_sleep_good){
+                                sleep = "Sleep well";
+                            }
+                            else if (sleepId == R.id.chip_sleep_bad){
+                                sleep = "Night waking";
+                            }
                         }
 
                         // activity
                         int activityId = chipActivity.getCheckedChipId();
                         String activity = null;
                         if (activityId != View.NO_ID) {
-                            Chip chip = chipActivity.findViewById(activityId);
-                            activity = chip.getText().toString();
+                            if (activityId == R.id.chip_activity_normal){
+                                activity = "Activity normal";
+                            }
+                            else if (activityId == R.id.chip_activity_limited){
+                                activity = "Activity a bit challenging";
+                            }
+                            else if (activityId == R.id.chip_activity_hard){
+                                activity = "Activity very difficult";
+                            }
                         }
 
                         // cough
                         int coughId = chipCough.getCheckedChipId();
                         String cough = null;
                         if (coughId != View.NO_ID) {
-                            Chip chip = chipCough.findViewById(coughId);
-                            cough = chip.getText().toString();
+                            if (coughId == R.id.chip_cough_no){
+                                cough = "No coughing";
+                            }
+                            else if (coughId == R.id.chip_cough_yes){
+                                cough = "Coughing";
+                            }
                         }
 
                         // triggers
