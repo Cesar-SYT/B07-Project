@@ -1,6 +1,10 @@
 package com.example.smartair.ui.symptoms;
 
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,12 +13,15 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +34,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,6 +45,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.LongConsumer;
+import android.graphics.pdf.PdfDocument;
 
 public class SymptomHistoryFragment extends Fragment {
 
@@ -44,6 +56,7 @@ public class SymptomHistoryFragment extends Fragment {
     private Button btnFilter;
     private ExtendedFloatingActionButton fabExport;
     List<SymptomEntry> fullHistoryList;
+    List<SymptomEntry> currentHistoryList;
 
     public SymptomHistoryFragment() {
     }
@@ -82,6 +95,10 @@ public class SymptomHistoryFragment extends Fragment {
                     // sort the symptom entries with respect to timestamp
                     fullHistoryList.sort((a, b) -> Long.compare(b.timestamp, a.timestamp));
 
+                    // initialize currentHistoryList, for the case
+                    // where the user does not choose any filter
+                    currentHistoryList = new ArrayList<>(fullHistoryList);
+
                     adapter.updateList(fullHistoryList);
                 })
                 .addOnFailureListener(e -> {
@@ -91,10 +108,8 @@ public class SymptomHistoryFragment extends Fragment {
         btnFilter.setOnClickListener(v ->
                 openFilters());
 
-        fabExport.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(v);
-            navController.navigate(R.id.action_symptomHistoryFragment_to_exportReportFragment);
-        });
+        fabExport.setOnClickListener(v ->
+                openExportSheet());
 
         return view;
     }
@@ -201,6 +216,7 @@ public class SymptomHistoryFragment extends Fragment {
                 }
             }
             adapter.updateList(filteredHistory);
+            currentHistoryList = filteredHistory;
             dialog.dismiss();
         });
     }
@@ -239,5 +255,89 @@ public class SymptomHistoryFragment extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
         return sdf.format(new Date(millis));
     }
+
+    private void openExportSheet() {
+        BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
+        View sheet = getLayoutInflater().inflate(R.layout.symptom_export_sheet, null);
+
+        dialog.setContentView(sheet);
+        dialog.show();
+
+        RadioButton rbPdf = sheet.findViewById(R.id.radio_pdf);
+        RadioButton rbCsv = sheet.findViewById(R.id.radio_csv);
+        Button btnExport = sheet.findViewById(R.id.button_export);
+
+        btnExport.setOnClickListener(v -> {
+            if (currentHistoryList == null || currentHistoryList.isEmpty()) {
+                Toast.makeText(getContext(), "No records to export", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (rbPdf.isChecked()) {
+                exportPDF(currentHistoryList);
+            }
+            else if (rbCsv.isChecked()) {
+                exportCSV(currentHistoryList);
+            }
+
+            dialog.dismiss();
+        });
+    }
+
+    private void exportPDF(List<SymptomEntry> entries) {
+        PdfDocument pdfDocument = new PdfDocument();
+        Paint paint = new Paint();
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create(); // A4尺寸
+        PdfDocument.Page page = pdfDocument.startPage(pageInfo);
+        Canvas canvas = page.getCanvas();
+
+        int x = 40, y = 50;
+        paint.setTextSize(14);
+        paint.setFakeBoldText(true);
+        canvas.drawText("Symptom History Report", x, y, paint);
+
+        y += 30;
+        paint.setFakeBoldText(false);
+
+        for (SymptomEntry entry : entries) {
+            if (y > 800) { // if it is too long, start at another page
+                pdfDocument.finishPage(page);
+                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pdfDocument.getPages().size() + 1).create();
+                page = pdfDocument.startPage(pageInfo);
+                canvas = page.getCanvas();
+                y = 50;
+            }
+
+            canvas.drawText("Date: " + formatDate(entry.timestamp), x, y, paint); y += 20;
+            canvas.drawText("Sleep: " + entry.sleep + ", Activity: " + entry.activity + ", Cough: " + entry.cough, x, y, paint); y += 20;
+            canvas.drawText("Triggers: " + String.join(", ", entry.triggers), x, y, paint); y += 20;
+            canvas.drawText("Entered By: " + entry.enteredBy, x, y, paint); y += 30;
+        }
+
+        pdfDocument.finishPage(page);
+
+        // save to file
+        String filename = "symptom_report_" + System.currentTimeMillis() + ".pdf";
+
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
+        values.put(MediaStore.Downloads.MIME_TYPE, "application/pdf");
+        values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/");
+
+        Uri uri = requireContext().getContentResolver()
+                .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+
+        try {
+            OutputStream os = requireContext().getContentResolver().openOutputStream(uri);
+            pdfDocument.writeTo(os);
+            os.close();
+            Toast.makeText(getContext(), "File saved to Download folder", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Export failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            pdfDocument.close();
+        }
+    }
+
 
 }
