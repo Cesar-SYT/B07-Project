@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -287,11 +289,16 @@ public class SymptomHistoryFragment extends Fragment {
     private void exportPDF(List<SymptomEntry> entries) {
         PdfDocument pdfDocument = new PdfDocument();
         Paint paint = new Paint();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create(); // A4尺寸
+        Paint pageNumberPaint = new Paint();
+
+        int x = 40;
+        int y = 50;
+        int pageNumber = 1;
+
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pageNumber).create(); // A4尺寸
         PdfDocument.Page page = pdfDocument.startPage(pageInfo);
         Canvas canvas = page.getCanvas();
 
-        int x = 40, y = 50;
         paint.setTextSize(14);
         paint.setFakeBoldText(true);
         canvas.drawText("Symptom History Report", x, y, paint);
@@ -300,18 +307,25 @@ public class SymptomHistoryFragment extends Fragment {
         paint.setFakeBoldText(false);
 
         for (SymptomEntry entry : entries) {
-            if (y > 800) { // if it is too long, start at another page
+            if (y > 760) { // if it is too long, start at another page
+                canvas.drawText("Page " + pageNumber, 290, 802, pageNumberPaint);
                 pdfDocument.finishPage(page);
-                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pdfDocument.getPages().size() + 1).create();
+
+                pageNumber++;
+                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pageNumber).create();
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
                 y = 50;
             }
 
-            canvas.drawText("Date: " + formatDate(entry.timestamp), x, y, paint); y += 20;
-            canvas.drawText("Sleep: " + entry.sleep + ", Activity: " + entry.activity + ", Cough: " + entry.cough, x, y, paint); y += 20;
-            canvas.drawText("Triggers: " + String.join(", ", entry.triggers), x, y, paint); y += 20;
-            canvas.drawText("Entered By: " + entry.enteredBy, x, y, paint); y += 30;
+            canvas.drawText("Date: " + formatDate(entry.timestamp), x, y, paint);
+            y += 20;
+            canvas.drawText("Sleep: " + entry.sleep + ", Activity: " + entry.activity + ", Cough: " + entry.cough, x, y, paint);
+            y += 20;
+            canvas.drawText("Triggers: " + String.join(", ", entry.triggers), x, y, paint);
+            y += 20;
+            canvas.drawText("Entered By: " + entry.enteredBy, x, y, paint);
+            y += 30;
         }
 
         pdfDocument.finishPage(page);
@@ -319,25 +333,107 @@ public class SymptomHistoryFragment extends Fragment {
         // save to file
         String filename = "symptom_report_" + System.currentTimeMillis() + ".pdf";
 
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
-        values.put(MediaStore.Downloads.MIME_TYPE, "application/pdf");
-        values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/");
-
-        Uri uri = requireContext().getContentResolver()
-                .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
-
         try {
-            OutputStream os = requireContext().getContentResolver().openOutputStream(uri);
-            pdfDocument.writeTo(os);
-            os.close();
-            Toast.makeText(getContext(), "File saved to Download folder", Toast.LENGTH_LONG).show();
+            // API 29+: save to Download
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
+                values.put(MediaStore.Downloads.MIME_TYPE, "application/pdf");
+                values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/");
+
+                Uri uri = requireContext().getContentResolver()
+                        .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                OutputStream os = requireContext().getContentResolver().openOutputStream(uri);
+                pdfDocument.writeTo(os);
+                os.close();
+                Toast.makeText(getContext(), "PDF saved to Download folder", Toast.LENGTH_LONG).show();
+            }
+            // API 24–28: save to app external directory
+            else {
+                File dir = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+                if (!dir.exists()) dir.mkdirs();
+                File file = new File(dir, filename);
+
+                FileOutputStream fos = new FileOutputStream(file);
+                pdfDocument.writeTo(fos);
+                fos.close();
+
+                Toast.makeText(getContext(),
+                        "PDF Saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            }
         } catch (Exception e) {
-            Toast.makeText(getContext(), "Export failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "PDF export failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
         } finally {
             pdfDocument.close();
         }
     }
 
+    private void exportCSV(List<SymptomEntry> entries) {
 
+        String filename = "symptom_report_" + System.currentTimeMillis() + ".csv";
+        StringBuilder sb = new StringBuilder();
+
+        // CSV Header
+        sb.append("Date,Sleep,Activity,Cough,Triggers,EnteredBy\n");
+
+        // Data rows
+        for (SymptomEntry e : entries) {
+
+            String date = formatDate(e.timestamp);
+            String sleep = e.sleep == null ? "" : e.sleep;
+            String activity = e.activity == null ? "" : e.activity;
+            String cough = e.cough == null ? "" : e.cough;
+            String enteredBy = e.enteredBy == null ? "" : e.enteredBy;
+
+            String triggers;
+            if (e.triggers == null || e.triggers.isEmpty()) {
+                triggers = "";
+            } else {
+                // triggers are separated by ";"
+                triggers = TextUtils.join(";", e.triggers);
+            }
+
+            sb.append(date).append(",")
+                    .append("\"").append(sleep).append("\"").append(",")
+                    .append("\"").append(activity).append("\"").append(",")
+                    .append("\"").append(cough).append("\"").append(",")
+                    .append("\"").append(triggers).append("\"").append(",")
+                    .append(enteredBy).append("\n");
+        }
+
+        try {
+            // API 29+: save to Download
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
+                values.put(MediaStore.Downloads.MIME_TYPE, "text/csv");
+                values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+                Uri uri = requireContext().getContentResolver()
+                        .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                OutputStream os = requireContext().getContentResolver().openOutputStream(uri);
+                os.write(sb.toString().getBytes());
+                os.close();
+
+                Toast.makeText(getContext(), "CSV saved to Download folder", Toast.LENGTH_LONG).show();
+            }
+            // API 24–28: save to app external directory
+            else {
+                File dir = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+                if (!dir.exists()) dir.mkdirs();
+                File file = new File(dir, filename);
+
+                FileOutputStream fos = new FileOutputStream(file);
+                fos.write(sb.toString().getBytes());
+                fos.close();
+
+                Toast.makeText(getContext(),
+                        "CSV saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(getContext(),
+                    "CSV export failed: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 }
