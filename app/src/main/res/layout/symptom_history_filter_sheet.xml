@@ -1,31 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="wrap_content">
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Filter By Symptom" style="?attr/textAppearanceSubtitle1"/>
-    <CheckBox android:id="@+id/filter_symptom_sleep" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Night Waking"/>
-    <CheckBox android:id="@+id/filter_symptom_activity" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Activity Limits"/>
-    <CheckBox android:id="@+id/filter_symptom_cough" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Cough / Wheeze"/>
-
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Filter By Trigger" style="?attr/textAppearanceSubtitle1" android:layout_marginTop="16dp"/>
-    <CheckBox android:id="@+id/filter_trigger_exercise" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Exercise"/>
-    <CheckBox android:id="@+id/filter_trigger_coldair" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Cold air"/>
-    <CheckBox android:id="@+id/filter_trigger_pets" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pets"/>
-    <CheckBox android:id="@+id/filter_trigger_smoke" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Smoke"/>
-    <CheckBox android:id="@+id/filter_trigger_illness" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Illness"/>
-    <CheckBox android:id="@+id/filter_trigger_perfume" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Perfume/cleaners/strong odors"/>
-
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Filter By Author" style="?attr/textAppearanceSubtitle1" android:layout_marginTop="16dp"/>
-    <CheckBox android:id="@+id/filter_author_child" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Child-entered"/>
-    <CheckBox android:id="@+id/filter_author_parent" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Parent-entered"/>
-
-    <Button
-        android:id="@+id/button_apply_filters"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Apply"/>
-</LinearLayout>
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- filter by symptoms -->
+        <TextView
+            android:id="@+id/title_symptom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter by Symptom ▾"
+            android:textSize="18sp"
+            android:paddingVertical="8dp" />
+
+        <LinearLayout
+            android:id="@+id/container_symptom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/filter_symptom_sleep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Night Waking" />
+
+            <CheckBox
+                android:id="@+id/filter_symptom_activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Activity Limits" />
+
+            <CheckBox
+                android:id="@+id/filter_symptom_cough"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cough / Wheeze" />
+        </LinearLayout>
+
+        <!-- filter by triggers -->
+        <TextView
+            android:id="@+id/title_trigger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter by Trigger ▾"
+            android:textSize="18sp"
+            android:paddingVertical="8dp"
+            android:layout_marginTop="16dp" />
+
+        <LinearLayout
+            android:id="@+id/container_trigger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <CheckBox android:id="@+id/filter_trigger_exercise"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exercise" />
+
+            <CheckBox android:id="@+id/filter_trigger_coldair"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cold air" />
+
+            <CheckBox android:id="@+id/filter_trigger_pets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pets" />
+
+            <CheckBox android:id="@+id/filter_trigger_smoke"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Smoke" />
+
+            <CheckBox android:id="@+id/filter_trigger_illness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Illness" />
+
+            <CheckBox android:id="@+id/filter_trigger_perfume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Perfume / Cleaners / Strong Odors" />
+        </LinearLayout>
+
+        <!-- filter by date range -->
+        <TextView
+            android:id="@+id/title_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter by Date Range ▾"
+            android:textSize="18sp"
+            android:paddingVertical="8dp"
+            android:layout_marginTop="16dp" />
+
+        <LinearLayout
+            android:id="@+id/container_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_pick_start_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Start Date" />
+
+            <Button
+                android:id="@+id/button_pick_end_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select End Date"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+
+        <!-- filter by author -->
+        <TextView
+            android:id="@+id/title_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter by Author ▾"
+            android:textSize="18sp"
+            android:paddingVertical="8dp"
+            android:layout_marginTop="16dp" />
+
+        <LinearLayout
+            android:id="@+id/container_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/filter_author_child"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Child-entered" />
+
+            <CheckBox
+                android:id="@+id/filter_author_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Parent-entered" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button_apply_filters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Apply" />
+    </LinearLayout>
+</ScrollView>

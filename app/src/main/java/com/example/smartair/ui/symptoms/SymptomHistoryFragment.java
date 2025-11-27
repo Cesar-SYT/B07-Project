@@ -1,5 +1,6 @@
 package com.example.smartair.ui.symptoms;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartair.R;
@@ -24,8 +27,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.LongConsumer;
 
 public class SymptomHistoryFragment extends Fragment {
 
@@ -101,6 +109,24 @@ public class SymptomHistoryFragment extends Fragment {
         dialog.setContentView(filterView);
         dialog.show();
 
+        // folding and unfolding
+        TextView title_symptom = filterView.findViewById(R.id.title_symptom);
+        LinearLayout container_symptom = filterView.findViewById(R.id.container_symptom);
+
+        TextView title_trigger = filterView.findViewById(R.id.title_trigger);
+        LinearLayout container_trigger = filterView.findViewById(R.id.container_trigger);
+
+        TextView title_date = filterView.findViewById(R.id.title_date);
+        LinearLayout container_date = filterView.findViewById(R.id.container_date);
+
+        TextView title_author = filterView.findViewById(R.id.title_author);
+        LinearLayout container_author = filterView.findViewById(R.id.container_author);
+
+        toggleSection(title_symptom, container_symptom);
+        toggleSection(title_trigger, container_trigger);
+        toggleSection(title_date, container_date);
+        toggleSection(title_author, container_author);
+
         // find views inside the filter sheet
         CheckBox cbSleep = filterView.findViewById(R.id.filter_symptom_sleep);
         CheckBox cbActivity = filterView.findViewById(R.id.filter_symptom_activity);
@@ -111,14 +137,37 @@ public class SymptomHistoryFragment extends Fragment {
 
         Button btnApply = filterView.findViewById(R.id.button_apply_filters);
 
-        // --- apply filters ---
+        CheckBox cbExercise = filterView.findViewById(R.id.filter_trigger_exercise);
+        CheckBox cbColdAir = filterView.findViewById(R.id.filter_trigger_coldair);
+        CheckBox cbPets = filterView.findViewById(R.id.filter_trigger_pets);
+        CheckBox cbSmoke = filterView.findViewById(R.id.filter_trigger_smoke);
+        CheckBox cbIllness = filterView.findViewById(R.id.filter_trigger_illness);
+        CheckBox cbPerfume = filterView.findViewById(R.id.filter_trigger_perfume);
+
+        Button btnStart = filterView.findViewById(R.id.button_pick_start_date);
+        Button btnEnd = filterView.findViewById(R.id.button_pick_end_date);
+
+        final long[] startDate = {Long.MIN_VALUE};
+        final long[] endDate = {Long.MAX_VALUE};
+
+        btnStart.setOnClickListener(v_2 -> pickDate(date -> {
+            startDate[0] = date;
+            btnStart.setText("Start: " + formatDate(date));
+        }));
+
+        btnEnd.setOnClickListener(v_2 -> pickDate(date -> {
+            endDate[0] = date;
+            btnEnd.setText("End: " + formatDate(date));
+        }));
+
+        // apply filters
         btnApply.setOnClickListener(v -> {
 
             List<SymptomEntry> filteredHistory = new ArrayList<>();
 
             for (SymptomEntry e : fullHistoryList) {
                 boolean ok = true;
-                // --- symptom filters ---
+                // filter by symptoms
                 if (cbSleep.isChecked()) {
                     ok &= (e.sleep != null && !e.sleep.equals("Good"));
                 }
@@ -129,41 +178,18 @@ public class SymptomHistoryFragment extends Fragment {
                     ok &= (e.cough != null && !e.cough.equals("No"));
                 }
 
-                // --- trigger filters ---
-                // trigger filters
-                CheckBox cbEx = filterView.findViewById(R.id.filter_trigger_exercise);
-                CheckBox cbCold = filterView.findViewById(R.id.filter_trigger_coldair);
-                CheckBox cbPets = filterView.findViewById(R.id.filter_trigger_pets);
-                CheckBox cbSmoke = filterView.findViewById(R.id.filter_trigger_smoke);
-                CheckBox cbIllness = filterView.findViewById(R.id.filter_trigger_illness);
-                CheckBox cbPerfume = filterView.findViewById(R.id.filter_trigger_perfume);
+                // filter by triggers
+                if (cbExercise.isChecked()) ok &= e.triggers.contains("Exercise");
+                if (cbColdAir.isChecked()) ok &= e.triggers.contains("Cold air");
+                if (cbPets.isChecked()) ok &= e.triggers.contains("Pets");
+                if (cbSmoke.isChecked()) ok &= e.triggers.contains("Smoke");
+                if (cbIllness.isChecked()) ok &= e.triggers.contains("Illness");
+                if (cbPerfume.isChecked()) ok &= e.triggers.contains("Perfume");
 
-                boolean triggerFilterUsed =
-                        cbEx.isChecked() ||
-                                cbCold.isChecked() ||
-                                cbPets.isChecked() ||
-                                cbSmoke.isChecked() ||
-                                cbIllness.isChecked() ||
-                                cbPerfume.isChecked();
+                //filter by date range
+                ok &= (e.timestamp >= startDate[0] && e.timestamp <= endDate[0]);
 
-                if (triggerFilterUsed) {
-                    boolean matchTrigger = false;
-                    List<String> t = e.triggers; // triggers of this entry
-
-                    if (t != null) {
-                        if (cbEx.isChecked() && t.contains("Exercise")) matchTrigger = true;
-                        if (cbCold.isChecked() && t.contains("Cold air")) matchTrigger = true;
-                        if (cbPets.isChecked() && t.contains("Pets")) matchTrigger = true;
-                        if (cbSmoke.isChecked() && t.contains("Smoke")) matchTrigger = true;
-                        if (cbIllness.isChecked() && t.contains("Illness")) matchTrigger = true;
-                        if (cbPerfume.isChecked() && t.contains("Perfume/cleaners/strong odors")) matchTrigger = true;
-                    }
-                    if (!matchTrigger) {
-                        ok = false;
-                    }
-                }
-
-                // --- author filters ---
+                // filter by author
                 if (cbChild.isChecked() && !cbParent.isChecked()) {
                     ok &= "child".equals(e.enteredBy);
                 }
@@ -178,4 +204,40 @@ public class SymptomHistoryFragment extends Fragment {
             dialog.dismiss();
         });
     }
+
+    private void toggleSection(TextView title, LinearLayout container) {
+        container.setVisibility(View.GONE);
+
+        title.setOnClickListener(v -> {
+            if (container.getVisibility() == View.VISIBLE) {
+                container.setVisibility(View.GONE);
+                title.setText(title.getText().toString().replace("▴", "▾"));
+            } else {
+                container.setVisibility(View.VISIBLE);
+                title.setText(title.getText().toString().replace("▾", "▴"));
+            }
+        });
+    }
+
+    private void pickDate(LongConsumer callback) {
+        Calendar cal = Calendar.getInstance();
+        DatePickerDialog dialog = new DatePickerDialog(
+                requireContext(),
+                (view, year, month, day) -> {
+                    Calendar c = Calendar.getInstance();
+                    c.set(year, month, day, 0, 0, 0);
+                    callback.accept(c.getTimeInMillis());
+                },
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+        );
+        dialog.show();
+    }
+
+    private String formatDate(long millis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
+        return sdf.format(new Date(millis));
+    }
+
 }
