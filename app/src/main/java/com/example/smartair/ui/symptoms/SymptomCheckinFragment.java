@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.smartair.R;
-import com.example.smartair.ui.models.SymptomEntry;
+import com.example.smartair.ui.r5model.SymptomEntry;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
