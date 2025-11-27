@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/symptomCheckinFragment">
+
+   <fragment
+        android:id="@+id/symptomCheckinFragment"
+        android:name="com.example.smartair.ui.symptoms.SymptomCheckinFragment"
+        android:label="Check-In" />
+
+    <fragment
+        android:id="@+id/symptomHistoryFragment"
+        android:name="com.example.smartair.ui.symptoms.SymptomHistoryFragment"
+        android:label="History">
+
+        <action
+            android:id="@+id/action_symptomHistoryFragment_to_exportReportFragment"
+            app:destination="@id/exportReportFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exportReportFragment"
+        android:name="com.example.smartair.ui.symptoms.ExportReportFragment"
+        android:label="Export" />
+
+</navigation>
