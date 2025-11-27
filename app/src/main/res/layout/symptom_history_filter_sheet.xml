@@ -11,7 +11,12 @@
     <CheckBox android:id="@+id/filter_symptom_cough" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Cough / Wheeze"/>
 
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Filter By Trigger" style="?attr/textAppearanceSubtitle1" android:layout_marginTop="16dp"/>
-    <!-- 这里可以动态添加所有触发因素的CheckBox -->
+    <CheckBox android:id="@+id/filter_trigger_exercise" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Exercise"/>
+    <CheckBox android:id="@+id/filter_trigger_coldair" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Cold air"/>
+    <CheckBox android:id="@+id/filter_trigger_pets" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pets"/>
+    <CheckBox android:id="@+id/filter_trigger_smoke" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Smoke"/>
+    <CheckBox android:id="@+id/filter_trigger_illness" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Illness"/>
+    <CheckBox android:id="@+id/filter_trigger_perfume" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Perfume/cleaners/strong odors"/>
 
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Filter By Author" style="?attr/textAppearanceSubtitle1" android:layout_marginTop="16dp"/>
     <CheckBox android:id="@+id/filter_author_child" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Child-entered"/>
