@@ -13,16 +13,6 @@
     <fragment
         android:id="@+id/symptomHistoryFragment"
         android:name="com.example.smartair.ui.symptoms.SymptomHistoryFragment"
-        android:label="History">
-
-        <action
-            android:id="@+id/action_symptomHistoryFragment_to_exportReportFragment"
-            app:destination="@id/exportReportFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/exportReportFragment"
-        android:name="com.example.smartair.ui.symptoms.ExportReportFragment"
-        android:label="Export" />
+        android:label="History" />
 
 </navigation>
