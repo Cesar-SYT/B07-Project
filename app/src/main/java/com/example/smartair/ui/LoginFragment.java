@@ -53,6 +53,9 @@ public class LoginFragment extends Fragment {
 
         textForgotPasswd.setOnClickListener(v -> {
             String email = editEmail.getText().toString().trim();
+            if (!email.contains("@")) {
+                email += "@child.com";
+            }
             if (email.isEmpty()){
                 Toast.makeText(requireContext(), "Please enter your email first", Toast.LENGTH_SHORT).show();
                 return;
