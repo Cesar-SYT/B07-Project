@@ -29,31 +29,21 @@
         app:layout_constraintTop_toBottomOf="@id/text_view_title" />
 
     <!-- 使用垂直链来均匀分布按钮 -->
-    <Button
-        android:id="@+id/button_select_child"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingVertical="16dp"
-        android:text="I am a Child"
-        app:layout_constraintBottom_toTopOf="@id/button_select_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintTop_toBottomOf="@id/text_view_subtitle"
-        android:layout_marginTop="48dp"/>
+
 
     <Button
         android:id="@+id/button_select_parent"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="59dp"
         android:layout_marginTop="24dp"
         android:paddingVertical="16dp"
         android:text="I am a Parent"
         app:layout_constraintBottom_toTopOf="@id/button_select_provider"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_select_child" />
+        app:layout_constraintTop_toBottomOf="@id/text_view_subtitle"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <Button
         android:id="@+id/button_select_provider"
