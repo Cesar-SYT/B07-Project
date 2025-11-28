@@ -30,13 +30,19 @@ public class OnboardingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         viewPager = view.findViewById(R.id.onboarding_view_pager);
 
-        String userType = getArguments().getString("userType");
+        String userType = getArguments().getString("role");
         List<OnboardingScreen> screens = getOnboardingScreens(userType);
 
         adapter = new OnboardingAdapter(this, screens, () -> {
-            // When onboarding is finished, navigate to the login screen
-            NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_onboardingFragment_to_loginFragment);
+            if (userType.equals("PARENT")){
+                // TODO: goto parent homepage
+            }
+            else if (userType.equals("CHILD")){
+                // TODO: goto child homepage
+            }
+            else if (userType.equals("PROVIDER")){
+                // TODO: goto provider homepage
+            }
         });
 
         viewPager.setAdapter(adapter);

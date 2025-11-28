@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.example.smartair.R;
 import com.example.smartair.ui.usermodel.Parent;
-import com.example.smartair.ui.usermodel.UserRole;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -49,7 +48,7 @@ public class RegisterParentFragment extends Fragment {
         loginPrompt = view.findViewById(R.id.text_view_login_prompt);
 
         loginPrompt.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(view);
+            NavController navController = Navigation.findNavController(v);
             navController.navigate(R.id.action_registerParentFragment_to_loginFragment);
         });
 
@@ -84,7 +83,7 @@ public class RegisterParentFragment extends Fragment {
                             Toast.makeText(requireContext(),
                                     "Registration successful", Toast.LENGTH_SHORT).show();
                             String uid = firebaseAuth.getCurrentUser().getUid();
-                            Parent  myparent = new Parent(uid, name, PARENT);
+                            Parent myparent = new Parent(uid, name, PARENT);
                             FirebaseDatabase.getInstance
                                             ("https://smart-air-61888-default-rtdb.firebaseio.com/").getReference("users")
                                     .child(uid)
@@ -92,7 +91,7 @@ public class RegisterParentFragment extends Fragment {
 
                             Bundle bundle = new Bundle();
                             bundle.putString("userRole", "PARENT");
-                            NavController navController = Navigation.findNavController(view);
+                            NavController navController = Navigation.findNavController(v);
                             navController.navigate(R.id.action_registerParentFragment_to_loginFragment, bundle);
                         }
                         else {

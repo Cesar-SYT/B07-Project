@@ -23,15 +23,9 @@ public class RoleSelectionFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_role_selection, container, false);
 
-        btnSelectChild = view.findViewById(R.id.button_select_child);
         btnSelectParent = view.findViewById(R.id.button_select_parent);
         btnSelectProvider = view.findViewById(R.id.button_select_provider);
 
-        btnSelectChild.setOnClickListener(v -> {
-            //goto register child page
-            NavController navController = Navigation.findNavController(v);
-            navController.navigate(R.id.action_roleSelectionFragment_to_registerChildFragment);
-        });
         btnSelectParent.setOnClickListener(v -> {
             //goto register parent page
             NavController navController = Navigation.findNavController(v);

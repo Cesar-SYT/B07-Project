@@ -12,16 +12,29 @@ public abstract class User {
         this.role = role;
         this.hasBeenOnboarding = false;
     }
+
     public String getId() {
         return id;
     }
+
     public UserRole getRole() {
         return role;
     }
+
     public String getDisplayName() {
         return displayName;
     }
+
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+
+    public boolean isHasBeenOnboarding() {
+        return hasBeenOnboarding;
+    }
+
+    public void setHasBeenOnboarding(boolean hasBeenOnboarding) {
+        this.hasBeenOnboarding = hasBeenOnboarding;
+    }
+
 }

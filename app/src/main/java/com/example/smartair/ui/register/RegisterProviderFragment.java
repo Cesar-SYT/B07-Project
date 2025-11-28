@@ -47,7 +47,7 @@ public class RegisterProviderFragment extends Fragment {
         loginPrompt = view.findViewById(R.id.text_view_login_prompt);
 
         loginPrompt.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(view);
+            NavController navController = Navigation.findNavController(v);
             navController.navigate(R.id.action_registerProviderFragment_to_loginFragment);
         });
 
@@ -90,7 +90,7 @@ public class RegisterProviderFragment extends Fragment {
 
                             Bundle bundle = new Bundle();
                             bundle.putString("userRole", "PROVIDER");
-                            NavController navController = Navigation.findNavController(view);
+                            NavController navController = Navigation.findNavController(v);
                             navController.navigate(R.id.action_registerProviderFragment_to_loginFragment, bundle);
                         } else {
                             Toast.makeText(requireContext(),

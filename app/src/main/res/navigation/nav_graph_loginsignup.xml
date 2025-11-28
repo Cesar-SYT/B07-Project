@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_loginFragment_to_roleSelectionFragment"
             app:destination="@id/roleSelectionFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_onboardingFragment"
+            app:destination="@id/onboardingFragment" />
     </fragment>
 
     <!-- role selection -->
@@ -42,9 +45,6 @@
         <action
             android:id="@+id/action_roleSelectionFragment_to_registerParentFragment"
             app:destination="@id/registerParentFragment" />
-        <action
-            android:id="@+id/action_roleSelectionFragment_to_registerChildFragment"
-            app:destination="@id/registerChildFragment" />
         <action
             android:id="@+id/action_roleSelectionFragment_to_registerProviderFragment"
             app:destination="@id/registerProviderFragment" />
@@ -59,9 +59,6 @@
         <action
             android:id="@+id/action_registerParentFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/action_registerParentFragment_to_onboardingFragment"
-            app:destination="@id/onboardingFragment" />
     </fragment>
 
 
@@ -75,9 +72,6 @@
         <action
             android:id="@+id/action_registerProviderFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/action_registerProviderFragment_to_onboardingFragment"
-            app:destination="@id/onboardingFragment" />
     </fragment>
 
     <fragment
@@ -85,11 +79,6 @@
         android:name="com.example.smartair.ui.onboarding.OnboardingFragment"
         android:label="Onboarding"
         tools:layout="@layout/fragment_onboarding">
-
-        <action
-            android:id="@+id/action_onboardingFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-
     </fragment>
 
 

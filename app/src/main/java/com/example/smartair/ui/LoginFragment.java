@@ -88,16 +88,23 @@ public class LoginFragment extends Fragment {
                                     .getReference("users")
                                     .child(uid);
                             ref.get().addOnSuccessListener(snapshot -> {
-                                String usertype = snapshot.child("userType").getValue(String.class);
+                                String usertype = snapshot.child("role").getValue(String.class);
+                                boolean hasBeenOnboarding = snapshot.child("hasaBeenOnboarding").getValue(Boolean.class);
 
-                                if (usertype.equals("parent")) {
-                                    // TODO: goto parent homepage
+                                if (!hasBeenOnboarding) {
+                                    NavController navController = Navigation.findNavController(v);
+                                    navController.navigate(R.id.action_loginFragment_to_onboardingFragment);
                                 }
-                                else if (usertype.equals("child")){
-                                    // TODO: goto child homepage
-                                }
-                                else{
-                                    // TODO: goto provider homepage
+                                else {
+                                    if (usertype.equals("PARENT")) {
+                                        // TODO: goto parent homepage
+                                    }
+                                    else if (usertype.equals("CHILD")){
+                                        // TODO: goto child homepage
+                                    }
+                                    else if (usertype.equals("PROVIDER")){
+                                        // TODO: goto provider homepage
+                                    }
                                 }
                             });
                         }
