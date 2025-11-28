@@ -34,33 +34,43 @@ public class OnboardingFragment extends Fragment {
         viewPager = view.findViewById(R.id.onboarding_view_pager);
         
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference ref = root.child("users").child(uid);
-        ref.child("hasBeenOnboarding").setValue(true);
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(uid);
 
-        String userType = getArguments().getString("role");
-        List<OnboardingScreen> screens = getOnboardingScreens(userType);
+        ref.child("role").get().addOnSuccessListener(snapshot -> {
+            String rawType = snapshot.getValue(String.class);
+            if (rawType == null) {
+                rawType = "PROVIDER"; // default, prevent crashing in case database accidentally didn't write type
+            }
+            String userType = rawType.toUpperCase();
 
-        adapter = new OnboardingAdapter(this, screens, () -> {
-            if (userType.equals("PARENT")){
-                // TODO: goto parent homepage
-            }
-            else if (userType.equals("CHILD")){
-                // TODO: goto child homepage
-            }
-            else if (userType.equals("PROVIDER")){
-                // TODO: goto provider homepage
-            }
+            List<OnboardingScreen> screens = getOnboardingScreens(userType);
+
+            adapter = new OnboardingAdapter(this, screens, () -> {
+                ref.child("hasBeenOnboarding").setValue(true);
+
+
+                if ("PARENT".equals(userType)){
+                    // TODO: goto parent homepage
+                }
+                else if ("CHILD".equals(userType)){
+                    // TODO: goto child homepage
+                }
+                else if ("PROVIDER".equals(userType)){
+                    // TODO: goto provider homepage
+                }
+            });
+            viewPager.setAdapter(adapter);
         });
 
-        viewPager.setAdapter(adapter);
     }
 
     private List<OnboardingScreen> getOnboardingScreens(String userType) {
-        if ("child".equals(userType)) {
+        if ("CHILD".equals(userType)) {
             return OnboardingRepo.getChildOnboardingScreens();
         }
-        else if ("parent".equals(userType)) {
+        else if ("PARENT".equals(userType)) {
             return OnboardingRepo.getParentOnboardingScreens();
         }
         else {

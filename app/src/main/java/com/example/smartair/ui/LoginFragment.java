@@ -89,7 +89,7 @@ public class LoginFragment extends Fragment {
                                     .child(uid);
                             ref.get().addOnSuccessListener(snapshot -> {
                                 String usertype = snapshot.child("role").getValue(String.class);
-                                boolean hasBeenOnboarding = snapshot.child("hasaBeenOnboarding").getValue(Boolean.class);
+                                boolean hasBeenOnboarding = snapshot.child("hasBeenOnboarding").getValue(Boolean.class);
 
                                 if (!hasBeenOnboarding) {
                                     NavController navController = Navigation.findNavController(v);
