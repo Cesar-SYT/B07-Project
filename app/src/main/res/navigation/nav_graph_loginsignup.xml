@@ -64,19 +64,7 @@
             app:destination="@id/onboardingFragment" />
     </fragment>
 
-    <!-- Child register -->
-    <fragment
-        android:id="@+id/registerChildFragment"
-        android:name="com.example.smartair.ui.register.RegisterChildFragment"
-        android:label="fragment_register_child"
-        tools:layout="@layout/fragment_register_child" >
-        <action
-            android:id="@+id/action_registerChildFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/action_registerChildFragment_to_onboardingFragment"
-            app:destination="@id/onboardingFragment" />
-    </fragment>
+
 
     <!-- Provider register -->
     <fragment
