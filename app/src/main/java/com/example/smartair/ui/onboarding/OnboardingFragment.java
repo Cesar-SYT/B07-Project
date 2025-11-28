@@ -12,6 +12,9 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.smartair.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -29,6 +32,11 @@ public class OnboardingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewPager = view.findViewById(R.id.onboarding_view_pager);
+        
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = root.child("users").child(uid);
+        ref.child("hasBeenOnboarding").setValue(true);
 
         String userType = getArguments().getString("role");
         List<OnboardingScreen> screens = getOnboardingScreens(userType);
