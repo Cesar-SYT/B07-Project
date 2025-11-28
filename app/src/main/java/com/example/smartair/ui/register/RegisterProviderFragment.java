@@ -1,5 +1,7 @@
 package com.example.smartair.ui.register;
 
+import static com.example.smartair.ui.usermodel.UserRole.PROVIDER;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +16,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.smartair.R;
-import com.example.smartair.ui.data.User;
+import com.example.smartair.ui.usermodel.Provider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -80,16 +82,16 @@ public class RegisterProviderFragment extends Fragment {
                             Toast.makeText(requireContext(),
                                     "Registration successful", Toast.LENGTH_SHORT).show();
                             String uid = firebaseAuth.getCurrentUser().getUid();
-                            User myuser = new User(uid, name, email, "provider");
+                            Provider myprovider = new Provider(uid, name, PROVIDER, "");
                             FirebaseDatabase.getInstance
                                             ("https://smart-air-61888-default-rtdb.firebaseio.com/").getReference("users")
                                     .child(uid)
-                                    .setValue(myuser);
+                                    .setValue(myprovider);
 
                             Bundle bundle = new Bundle();
-                            bundle.putString("userType", "provider");
+                            bundle.putString("userRole", "PROVIDER");
                             NavController navController = Navigation.findNavController(view);
-                            navController.navigate(R.id.action_registerProviderFragment_to_onboardingFragment, bundle);
+                            navController.navigate(R.id.action_registerProviderFragment_to_loginFragment, bundle);
                         } else {
                             Toast.makeText(requireContext(),
                                     "Registration failed:" + task.getException().getMessage(),

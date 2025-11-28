@@ -4,7 +4,7 @@ public class Provider extends User{
     private String clinicName;
     private String specialty;
 
-    public Provider(String id, String displayName, String clinicName) {
+    public Provider(String id, String displayName, UserRole provider, String clinicName) {
         super(id, displayName, UserRole.PROVIDER);
         this.clinicName = clinicName;
     }

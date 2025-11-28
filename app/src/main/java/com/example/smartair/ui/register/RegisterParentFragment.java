@@ -1,5 +1,7 @@
 package com.example.smartair.ui.register;
 
+import static com.example.smartair.ui.usermodel.UserRole.PARENT;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,7 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartair.R;
-import com.example.smartair.ui.data.User;
+import com.example.smartair.ui.usermodel.Parent;
+import com.example.smartair.ui.usermodel.UserRole;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -81,17 +84,18 @@ public class RegisterParentFragment extends Fragment {
                             Toast.makeText(requireContext(),
                                     "Registration successful", Toast.LENGTH_SHORT).show();
                             String uid = firebaseAuth.getCurrentUser().getUid();
-                            User myuser = new User(uid, name, email, "parent");
+                            Parent  myparent = new Parent(uid, name, PARENT);
                             FirebaseDatabase.getInstance
                                             ("https://smart-air-61888-default-rtdb.firebaseio.com/").getReference("users")
                                     .child(uid)
-                                    .setValue(myuser);
+                                    .setValue(myparent);
 
                             Bundle bundle = new Bundle();
-                            bundle.putString("userType", "parent");
+                            bundle.putString("userRole", "PARENT");
                             NavController navController = Navigation.findNavController(view);
-                            navController.navigate(R.id.action_registerParentFragment_to_onboardingFragment, bundle);
-                        } else {
+                            navController.navigate(R.id.action_registerParentFragment_to_loginFragment, bundle);
+                        }
+                        else {
                             Toast.makeText(requireContext(),
                                     "Registration failed:" + task.getException().getMessage(),
                                     Toast.LENGTH_LONG).show();

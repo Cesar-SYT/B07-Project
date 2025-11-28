@@ -6,7 +6,7 @@ import java.util.List;
 public class Parent extends User{
     private final List<Child> children = new ArrayList<>();
 
-    public Parent(String id, String displayName) {
+    public Parent(String id, String displayName, UserRole parent) {
         super(id, displayName, UserRole.PARENT);
     }
 
