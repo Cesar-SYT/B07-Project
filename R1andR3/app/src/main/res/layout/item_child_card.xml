@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:gravity="center_vertical"
+    android:background="?attr/selectableItemBackground">
+
+    <!-- Child Avatar (Circle) -->
+    <!-- Using MaterialCardView to create a circular container -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="#E0E0E0">
+        
+        <ImageView
+            android:id="@+id/iv_child_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@android:drawable/sym_def_app_icon" 
+            android:scaleType="centerCrop"
+            android:contentDescription="Child Avatar"/>
+            <!-- Placeholder icon, real app would load image or initials -->
+    </androidx.cardview.widget.CardView>
+
+    <!-- Child Info -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="16dp">
+
+        <TextView
+            android:id="@+id/tv_child_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Child Name"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+            
+            <TextView
+                android:id="@+id/tv_child_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Age: 8"
+                android:textSize="14sp"
+                android:textColor="#666666"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="  |  "
+                android:textSize="14sp"
+                android:textColor="#CCCCCC"/>
+
+            <TextView
+                android:id="@+id/tv_child_dob"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DOB: 2015-05-20"
+                android:textSize="14sp"
+                android:textColor="#666666"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Arrow indicator -->
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@android:drawable/ic_media_play" 
+        android:rotation="0" 
+        android:contentDescription="Go to detail"
+        app:tint="#CCCCCC"/>
+
+</LinearLayout>
