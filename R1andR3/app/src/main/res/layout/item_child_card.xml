@@ -49,29 +49,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="4dp">
-            
-            <TextView
-                android:id="@+id/tv_child_age"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Age: 8"
-                android:textSize="14sp"
-                android:textColor="#666666"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="  |  "
-                android:textSize="14sp"
-                android:textColor="#CCCCCC"/>
 
-            <TextView
-                android:id="@+id/tv_child_dob"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DOB: 2015-05-20"
-                android:textSize="14sp"
-                android:textColor="#666666"/>
+
         </LinearLayout>
     </LinearLayout>
 
