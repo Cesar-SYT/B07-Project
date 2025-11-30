@@ -3,16 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/symptomCheckinFragment">
+    app:startDestination="@id/symptomCheckinParentFragment">
 
    <fragment
-        android:id="@+id/symptomCheckinFragment"
+        android:id="@+id/symptomCheckinParentFragment"
         android:name="com.example.smartair.symptoms.SymptomCheckinParentFragment"
         android:label="Check-In" />
 
     <fragment
-        android:id="@+id/symptomHistoryFragment"
-        android:name="com.example.smartair.symptoms.SymptomHistoryFragment"
+        android:id="@+id/symptomCheckinChildFragment"
+        android:name="com.example.smartair.symptoms.SymptomCheckinChildFragment"
+        android:label="Check-In" />
+
+    <fragment
+        android:id="@+id/symptomHistoryParentFragment"
+        android:name="com.example.smartair.symptoms.SymptomHistoryParentFragment"
+        android:label="History" />
+
+    <fragment
+        android:id="@+id/symptomHistoryChildFragment"
+        android:name="com.example.smartair.symptoms.SymptomHistoryChildFragment"
         android:label="History" />
 
 </navigation>

@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +22,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -33,9 +38,13 @@ public class SymptomCheckinParentFragment extends Fragment {
     private ChipGroup chipGroupTriggers;
     private TextInputEditText editOtherTrigger;
     private Button btnSave;
+    private Button btnExport;
     private FirebaseAuth auth;
-    private DatabaseReference db;
     private String childEmail;
+
+    private RecyclerView recyclerViewHistory;
+    private SymptomHistoryAdapter historyAdapter;
+    private List<SymptomEntry> historyList = new ArrayList<>();
 
 
     public SymptomCheckinParentFragment() {
@@ -48,7 +57,6 @@ public class SymptomCheckinParentFragment extends Fragment {
         View view = inflater.inflate(R.layout.symptom_checkin_fragment, container, false);
 
         auth = FirebaseAuth.getInstance();
-        db = FirebaseDatabase.getInstance().getReference("checkins");
 
         chipSleep = view.findViewById(R.id.chip_group_q1_sleep);
         chipActivity = view.findViewById(R.id.chip_group_q2_activity);
@@ -57,6 +65,12 @@ public class SymptomCheckinParentFragment extends Fragment {
         chipGroupTriggers = view.findViewById(R.id.chip_group_triggers);
         editOtherTrigger = view.findViewById(R.id.edit_text_other_trigger);
         btnSave = view.findViewById(R.id.button_save);
+        btnExport = view.findViewById(R.id.button_export);
+
+        recyclerViewHistory = view.findViewById(R.id.recycler_view_history);
+        recyclerViewHistory.setLayoutManager(new LinearLayoutManager(getContext()));
+        historyAdapter = new SymptomHistoryAdapter(historyList);
+        recyclerViewHistory.setAdapter(historyAdapter);
 
         // if at least one of the symptoms is selected, triggers becomes visible
         chipSleep.setOnCheckedStateChangeListener((group, checkedIds) -> {
@@ -81,6 +95,23 @@ public class SymptomCheckinParentFragment extends Fragment {
 
         navController.navigate(R.id.symptomParentCheckinFragment, args);
          */
+        String key = childEmail.replace(".", ",");
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(key)
+                .child("symptomCheckins");
+        ref.get().addOnSuccessListener(snapshot -> {
+            historyList.clear();
+            for (DataSnapshot child : snapshot.getChildren()) {
+                SymptomEntry entry = child.getValue(SymptomEntry.class);
+                if (entry != null) {
+                    historyList.add(entry);
+                }
+            }
+
+            historyList.sort((a, b) -> Long.compare(b.timestamp, a.timestamp));
+            historyAdapter.updateList(historyList);
+        });
 
         // final choices when button save is clicked
         btnSave.setOnClickListener(v -> {
@@ -155,24 +186,24 @@ public class SymptomCheckinParentFragment extends Fragment {
                     enteredBy
             );
 
-            String key = childEmail.replace(".", ",");
-
-            DatabaseReference ref = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(key)
-                    .child("symptomCheckins");
-
             ref.push().setValue(entry)
                     .addOnSuccessListener(unused -> {
                         Toast.makeText(getContext(), "Daily check-in saved for your child.", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getActivity(), ParentHomeActivity.class);
-                        // TODO: fix the navigation if it is not correct
-                        startActivity(intent);
-                        requireActivity().finish();
+                        historyList.add(0, entry);
+                        historyAdapter.notifyItemInserted(0);
+                        recyclerViewHistory.scrollToPosition(0);
                     })
                     .addOnFailureListener(e ->
                             Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
                     );
+        });
+
+        btnExport.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            args.putString("childEmail", childEmail);
+
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(R.id.symptomHistoryParentFragment, args);
         });
         return view;
     }
