@@ -1,5 +1,6 @@
 package com.example.smartair.symptoms;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,10 +87,9 @@ public class SymptomCheckinChildFragment extends Fragment {
                         int sleepId = chipSleep.getCheckedChipId();
                         String sleep = null;
                         if (sleepId != View.NO_ID) {
-                            if (sleepId == R.id.chip_sleep_good){
+                            if (sleepId == R.id.chip_sleep_good) {
                                 sleep = "Sleep well";
-                            }
-                            else if (sleepId == R.id.chip_sleep_bad){
+                            } else if (sleepId == R.id.chip_sleep_bad) {
                                 sleep = "Night waking";
                             }
                         }
@@ -98,13 +98,11 @@ public class SymptomCheckinChildFragment extends Fragment {
                         int activityId = chipActivity.getCheckedChipId();
                         String activity = null;
                         if (activityId != View.NO_ID) {
-                            if (activityId == R.id.chip_activity_normal){
+                            if (activityId == R.id.chip_activity_normal) {
                                 activity = "Activity normal";
-                            }
-                            else if (activityId == R.id.chip_activity_limited){
+                            } else if (activityId == R.id.chip_activity_limited) {
                                 activity = "Activity a bit challenging";
-                            }
-                            else if (activityId == R.id.chip_activity_hard){
+                            } else if (activityId == R.id.chip_activity_hard) {
                                 activity = "Activity very difficult";
                             }
                         }
@@ -113,10 +111,9 @@ public class SymptomCheckinChildFragment extends Fragment {
                         int coughId = chipCough.getCheckedChipId();
                         String cough = null;
                         if (coughId != View.NO_ID) {
-                            if (coughId == R.id.chip_cough_no){
+                            if (coughId == R.id.chip_cough_no) {
                                 cough = "No coughing";
-                            }
-                            else if (coughId == R.id.chip_cough_yes){
+                            } else if (coughId == R.id.chip_cough_yes) {
                                 cough = "Coughing";
                             }
                         }
@@ -154,19 +151,18 @@ public class SymptomCheckinChildFragment extends Fragment {
                         );
 
                         db.child(childId).push().setValue(entry)
-                                .addOnSuccessListener(unused ->
-                                        Toast.makeText(getContext(), "Daily check-in saved!", Toast.LENGTH_SHORT).show()
-                                )
+                                .addOnSuccessListener(unused -> {
+                                    Toast.makeText(getContext(), "Daily check-in saved!", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getActivity(), ChildHomeActivity.class);
+                                    // TODO: fix the navigation if it is not correct
+                                    startActivity(intent);
+                                    requireActivity().finish();
+                                })
                                 .addOnFailureListener(e ->
                                         Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
                                 );
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(getContext(), "Error reading user role: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                    );
+                    });
         });
-
-
         return view;
     }
 
