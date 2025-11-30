@@ -53,7 +53,7 @@ public class SymptomHistoryParentFragment extends Fragment {
     private FirebaseAuth auth;
     private Button btnFilter;
     private ExtendedFloatingActionButton fabExport;
-    private String childId;
+    private String childEmail;
     List<SymptomEntry> fullHistoryList;
     List<SymptomEntry> currentHistoryList;
 
@@ -79,21 +79,24 @@ public class SymptomHistoryParentFragment extends Fragment {
         fullHistoryList = new ArrayList<>();
 
         // load full history from database
-        childId = getArguments().getString("childId");
-        if (childId == null) {
+        childEmail = getArguments().getString("childEmail");
+        if (childEmail == null) {
             Toast.makeText(getContext(), "Error: No child selected.", Toast.LENGTH_LONG).show();
             return view;
         }
-        // TODO: I need parent homepage pass me childId, before navigating here
+        // TODO: I need parent homepage pass me childEmail, before navigating here
         /*
         Bundle args = new Bundle();
-        args.putString("childId", selectedChildId);
+        args.putString("childEmail", selectedChildEmail);
 
         navController.navigate(R.id.symptomParentCheckinFragment, args);
          */
-        db.child(childId)
-                .get()
-                .addOnSuccessListener(snapshot -> {
+        String key = childEmail.replace(".", ",");
+        db = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(key)
+                .child("symptomCheckins");
+        db.get().addOnSuccessListener(snapshot -> {
                     fullHistoryList.clear();
                     for (DataSnapshot child : snapshot.getChildren()) {
                         SymptomEntry entry = child.getValue(SymptomEntry.class);
@@ -194,13 +197,13 @@ public class SymptomHistoryParentFragment extends Fragment {
                 boolean ok = true;
                 // filter by symptoms
                 if (cbSleep.isChecked()) {
-                    ok &= (e.sleep != null && !e.sleep.equals("Good"));
+                    ok &= (e.sleep != null && !e.sleep.equals("Sleep well"));
                 }
                 if (cbActivity.isChecked()) {
-                    ok &= (e.activity != null && !e.activity.equals("Normal"));
+                    ok &= (e.activity != null && !e.activity.equals("Activity normal"));
                 }
                 if (cbCough.isChecked()) {
-                    ok &= (e.cough != null && !e.cough.equals("No"));
+                    ok &= (e.cough != null && !e.cough.equals("No coughing"));
                 }
 
                 // filter by triggers
@@ -216,10 +219,10 @@ public class SymptomHistoryParentFragment extends Fragment {
 
                 // filter by author
                 if (cbChild.isChecked() && !cbParent.isChecked()) {
-                    ok &= "child".equals(e.enteredBy);
+                    ok &= "CHILD".equals(e.enteredBy);
                 }
                 if (cbParent.isChecked() && !cbChild.isChecked()) {
-                    ok &= "parent".equals(e.enteredBy);
+                    ok &= "PARENT".equals(e.enteredBy);
                 }
                 if (ok) {
                     filteredHistory.add(e);

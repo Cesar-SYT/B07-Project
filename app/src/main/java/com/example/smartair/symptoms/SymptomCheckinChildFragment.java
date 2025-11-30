@@ -71,8 +71,6 @@ public class SymptomCheckinChildFragment extends Fragment {
         // final choices when button save is clicked
         btnSave.setOnClickListener(v -> {
 
-            String childId = auth.getCurrentUser().getUid();
-
             // role
             String enteredBy = "CHILD";
 
@@ -143,16 +141,28 @@ public class SymptomCheckinChildFragment extends Fragment {
                     enteredBy
             );
 
-            db.child(childId).push().setValue(entry)
+            String childEmail = auth.getCurrentUser().getEmail();
+            if (childEmail == null) {
+                Toast.makeText(getContext(), "User email not found!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String key = childEmail.replace(".", ",");
+
+            DatabaseReference ref = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(key)
+                    .child("symptomCheckins");
+
+            ref.push().setValue(entry)
                     .addOnSuccessListener(unused -> {
                         Toast.makeText(getContext(), "Daily check-in saved!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getActivity(), ChildHomeActivity.class);
                         // TODO: fix the navigation if it is not correct
                         startActivity(intent);
                         requireActivity().finish();
-                        })
+                    })
                     .addOnFailureListener(e ->
-                                    Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                            Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
                     );
         });
         return view;

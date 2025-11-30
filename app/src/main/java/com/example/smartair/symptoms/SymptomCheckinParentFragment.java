@@ -35,7 +35,7 @@ public class SymptomCheckinParentFragment extends Fragment {
     private Button btnSave;
     private FirebaseAuth auth;
     private DatabaseReference db;
-    private String childId;
+    private String childEmail;
 
 
     public SymptomCheckinParentFragment() {
@@ -69,15 +69,15 @@ public class SymptomCheckinParentFragment extends Fragment {
             updateTriggersVisibility();
         });
 
-        childId = getArguments().getString("childId");
-        if (childId == null) {
+        childEmail = getArguments().getString("childEmail");
+        if (childEmail == null) {
             Toast.makeText(getContext(), "Error: No child selected.", Toast.LENGTH_LONG).show();
             return view;
         }
-        // TODO: I need parent homepage pass me childId, before navigating here
+        // TODO: I need parent homepage pass me childEmail, before navigating here
         /*
         Bundle args = new Bundle();
-        args.putString("childId", selectedChildId);
+        args.putString("childEmail", selectedChildEmail);
 
         navController.navigate(R.id.symptomParentCheckinFragment, args);
          */
@@ -155,7 +155,14 @@ public class SymptomCheckinParentFragment extends Fragment {
                     enteredBy
             );
 
-            db.child(childId).push().setValue(entry)
+            String key = childEmail.replace(".", ",");
+
+            DatabaseReference ref = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(key)
+                    .child("symptomCheckins");
+
+            ref.push().setValue(entry)
                     .addOnSuccessListener(unused -> {
                         Toast.makeText(getContext(), "Daily check-in saved for your child.", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getActivity(), ParentHomeActivity.class);
@@ -167,7 +174,6 @@ public class SymptomCheckinParentFragment extends Fragment {
                             Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
                     );
         });
-
         return view;
     }
 

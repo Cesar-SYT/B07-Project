@@ -70,7 +70,6 @@ public class SymptomHistoryChildFragment extends Fragment {
         fabExport = view.findViewById(R.id.fab_export);
 
         auth = FirebaseAuth.getInstance();
-        db = FirebaseDatabase.getInstance().getReference("checkins");
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new SymptomHistoryAdapter(new ArrayList<>());
@@ -79,10 +78,13 @@ public class SymptomHistoryChildFragment extends Fragment {
         fullHistoryList = new ArrayList<>();
 
         // load full history from database
-        String childId = auth.getCurrentUser().getUid();
-        db.child(childId)
-                .get()
-                .addOnSuccessListener(snapshot -> {
+        String childEmail = auth.getCurrentUser().getEmail();
+        String key = childEmail.replace(".", ",");
+        db = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(key)
+                .child("symptomCheckins");
+        db.get().addOnSuccessListener(snapshot -> {
                     fullHistoryList.clear();
                     for (DataSnapshot child : snapshot.getChildren()) {
                         SymptomEntry entry = child.getValue(SymptomEntry.class);
@@ -183,13 +185,13 @@ public class SymptomHistoryChildFragment extends Fragment {
                 boolean ok = true;
                 // filter by symptoms
                 if (cbSleep.isChecked()) {
-                    ok &= (e.sleep != null && !e.sleep.equals("Good"));
+                    ok &= (e.sleep != null && !e.sleep.equals("Sleep well"));
                 }
                 if (cbActivity.isChecked()) {
-                    ok &= (e.activity != null && !e.activity.equals("Normal"));
+                    ok &= (e.activity != null && !e.activity.equals("Activity normal"));
                 }
                 if (cbCough.isChecked()) {
-                    ok &= (e.cough != null && !e.cough.equals("No"));
+                    ok &= (e.cough != null && !e.cough.equals("No coughing"));
                 }
 
                 // filter by triggers
@@ -205,10 +207,10 @@ public class SymptomHistoryChildFragment extends Fragment {
 
                 // filter by author
                 if (cbChild.isChecked() && !cbParent.isChecked()) {
-                    ok &= "child".equals(e.enteredBy);
+                    ok &= "CHILD".equals(e.enteredBy);
                 }
                 if (cbParent.isChecked() && !cbChild.isChecked()) {
-                    ok &= "parent".equals(e.enteredBy);
+                    ok &= "PARENT".equals(e.enteredBy);
                 }
                 if (ok) {
                     filteredHistory.add(e);
