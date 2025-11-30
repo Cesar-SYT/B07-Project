@@ -2,6 +2,7 @@ package com.example.smartair;
 
 import android.os.Bundle;
 
+import com.example.smartair.R;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
