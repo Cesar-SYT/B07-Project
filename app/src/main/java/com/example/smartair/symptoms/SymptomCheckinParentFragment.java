@@ -23,7 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SymptomCheckinFragment extends Fragment {
+public class SymptomCheckinParentFragment extends Fragment {
 
     private ChipGroup chipSleep;
     private ChipGroup chipActivity;
@@ -36,7 +36,7 @@ public class SymptomCheckinFragment extends Fragment {
     private DatabaseReference db;
 
 
-    public SymptomCheckinFragment() {
+    public SymptomCheckinParentFragment() {
         // Required empty public constructor
     }
 
