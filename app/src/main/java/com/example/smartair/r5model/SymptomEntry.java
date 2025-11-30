@@ -1,4 +1,4 @@
-package com.example.smartair.ui.r5model;
+package com.example.smartair.r5model;
 
 import java.util.List;
 

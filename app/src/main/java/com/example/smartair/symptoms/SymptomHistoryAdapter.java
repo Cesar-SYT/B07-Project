@@ -1,4 +1,4 @@
-package com.example.smartair.ui.symptoms;
+package com.example.smartair.symptoms;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartair.R;
-import com.example.smartair.ui.r5model.SymptomEntry;
+import com.example.smartair.r5model.SymptomEntry;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 

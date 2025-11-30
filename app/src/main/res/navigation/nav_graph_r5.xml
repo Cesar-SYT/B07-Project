@@ -7,12 +7,12 @@
 
    <fragment
         android:id="@+id/symptomCheckinFragment"
-        android:name="com.example.smartair.ui.symptoms.SymptomCheckinFragment"
+        android:name="com.example.smartair.symptoms.SymptomCheckinFragment"
         android:label="Check-In" />
 
     <fragment
         android:id="@+id/symptomHistoryFragment"
-        android:name="com.example.smartair.ui.symptoms.SymptomHistoryFragment"
+        android:name="com.example.smartair.symptoms.SymptomHistoryFragment"
         android:label="History" />
 
 </navigation>

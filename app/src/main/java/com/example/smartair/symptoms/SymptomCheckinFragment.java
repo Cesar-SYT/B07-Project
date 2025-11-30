@@ -1,4 +1,4 @@
-package com.example.smartair.ui.symptoms;
+package com.example.smartair.symptoms;
 
 import android.os.Bundle;
 
@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.smartair.R;
-import com.example.smartair.ui.r5model.SymptomEntry;
+import com.example.smartair.r5model.SymptomEntry;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;

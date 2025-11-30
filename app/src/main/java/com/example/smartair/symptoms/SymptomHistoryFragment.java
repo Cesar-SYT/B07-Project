@@ -1,4 +1,4 @@
-package com.example.smartair.ui.symptoms;
+package com.example.smartair.symptoms;
 
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
@@ -9,8 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartair.R;
-import com.example.smartair.ui.r5model.SymptomEntry;
+import com.example.smartair.r5model.SymptomEntry;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,7 +36,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
