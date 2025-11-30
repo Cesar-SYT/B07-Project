@@ -73,95 +73,87 @@ public class SymptomCheckinChildFragment extends Fragment {
 
             String childId = auth.getCurrentUser().getUid();
 
-            DatabaseReference userRef = FirebaseDatabase.getInstance()
-                    .getReference("Users")
-                    .child(childId);
+            // role
+            String enteredBy = "CHILD";
 
-            userRef.child("role").get()
-                    .addOnSuccessListener(snapshot -> {
+            // sleep
+            int sleepId = chipSleep.getCheckedChipId();
+            String sleep = null;
+            if (sleepId != View.NO_ID) {
+                if (sleepId == R.id.chip_sleep_good) {
+                    sleep = "Sleep well";
+                } else if (sleepId == R.id.chip_sleep_bad) {
+                    sleep = "Night waking";
+                }
+            }
 
-                        // role
-                        String enteredBy = "CHILD";
+            // activity
+            int activityId = chipActivity.getCheckedChipId();
+            String activity = null;
+            if (activityId != View.NO_ID) {
+                if (activityId == R.id.chip_activity_normal) {
+                    activity = "Activity normal";
+                } else if (activityId == R.id.chip_activity_limited) {
+                    activity = "Activity a bit challenging";
+                } else if (activityId == R.id.chip_activity_hard) {
+                    activity = "Activity very difficult";
+                }
+            }
 
-                        // sleep
-                        int sleepId = chipSleep.getCheckedChipId();
-                        String sleep = null;
-                        if (sleepId != View.NO_ID) {
-                            if (sleepId == R.id.chip_sleep_good) {
-                                sleep = "Sleep well";
-                            } else if (sleepId == R.id.chip_sleep_bad) {
-                                sleep = "Night waking";
-                            }
-                        }
+            // cough
+            int coughId = chipCough.getCheckedChipId();
+            String cough = null;
+            if (coughId != View.NO_ID) {
+                if (coughId == R.id.chip_cough_no) {
+                    cough = "No coughing";
+                } else if (coughId == R.id.chip_cough_yes) {
+                    cough = "Coughing";
+                }
+            }
 
-                        // activity
-                        int activityId = chipActivity.getCheckedChipId();
-                        String activity = null;
-                        if (activityId != View.NO_ID) {
-                            if (activityId == R.id.chip_activity_normal) {
-                                activity = "Activity normal";
-                            } else if (activityId == R.id.chip_activity_limited) {
-                                activity = "Activity a bit challenging";
-                            } else if (activityId == R.id.chip_activity_hard) {
-                                activity = "Activity very difficult";
-                            }
-                        }
+            // triggers
+            List<String> triggers = new ArrayList<>();
+            int count = chipGroupTriggers.getChildCount();
+            for (int i = 0; i < count; i++) {
+                View child = chipGroupTriggers.getChildAt(i);
+                if (child instanceof Chip) {
+                    Chip chip = (Chip) child;
+                    if (chip.isChecked()) {
+                        triggers.add(chip.getText().toString());
+                    }
+                }
+            }
 
-                        // cough
-                        int coughId = chipCough.getCheckedChipId();
-                        String cough = null;
-                        if (coughId != View.NO_ID) {
-                            if (coughId == R.id.chip_cough_no) {
-                                cough = "No coughing";
-                            } else if (coughId == R.id.chip_cough_yes) {
-                                cough = "Coughing";
-                            }
-                        }
+            if (editOtherTrigger != null) {
+                String otherTrigger = editOtherTrigger.getText().toString().trim();
+                if (!otherTrigger.isEmpty()) {
+                    triggers.add(otherTrigger);
+                }
+            }
 
-                        // triggers
-                        List<String> triggers = new ArrayList<>();
-                        int count = chipGroupTriggers.getChildCount();
-                        for (int i = 0; i < count; i++) {
-                            View child = chipGroupTriggers.getChildAt(i);
-                            if (child instanceof Chip) {
-                                Chip chip = (Chip) child;
-                                if (chip.isChecked()) {
-                                    triggers.add(chip.getText().toString());
-                                }
-                            }
-                        }
+            // save everything
+            long timestamp = System.currentTimeMillis();
 
-                        if (editOtherTrigger != null) {
-                            String otherTrigger = editOtherTrigger.getText().toString().trim();
-                            if (!otherTrigger.isEmpty()) {
-                                triggers.add(otherTrigger);
-                            }
-                        }
+            SymptomEntry entry = new SymptomEntry(
+                    sleep,
+                    activity,
+                    cough,
+                    triggers,
+                    timestamp,
+                    enteredBy
+            );
 
-                        // save everything
-                        long timestamp = System.currentTimeMillis();
-
-                        SymptomEntry entry = new SymptomEntry(
-                                sleep,
-                                activity,
-                                cough,
-                                triggers,
-                                timestamp,
-                                enteredBy
-                        );
-
-                        db.child(childId).push().setValue(entry)
-                                .addOnSuccessListener(unused -> {
-                                    Toast.makeText(getContext(), "Daily check-in saved!", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getActivity(), ChildHomeActivity.class);
-                                    // TODO: fix the navigation if it is not correct
-                                    startActivity(intent);
-                                    requireActivity().finish();
-                                })
-                                .addOnFailureListener(e ->
-                                        Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                                );
-                    });
+            db.child(childId).push().setValue(entry)
+                    .addOnSuccessListener(unused -> {
+                        Toast.makeText(getContext(), "Daily check-in saved!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getActivity(), ChildHomeActivity.class);
+                        // TODO: fix the navigation if it is not correct
+                        startActivity(intent);
+                        requireActivity().finish();
+                        })
+                    .addOnFailureListener(e ->
+                                    Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                    );
         });
         return view;
     }
