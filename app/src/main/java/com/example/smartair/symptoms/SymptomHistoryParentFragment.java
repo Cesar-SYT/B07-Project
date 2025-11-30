@@ -4,14 +4,10 @@ import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -24,6 +20,10 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartair.R;
 import com.example.smartair.r5model.SymptomEntry;
@@ -44,9 +44,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.LongConsumer;
-import android.graphics.pdf.PdfDocument;
 
-public class SymptomHistoryFragment extends Fragment {
+public class SymptomHistoryParentFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private SymptomHistoryAdapter adapter;
@@ -54,10 +53,11 @@ public class SymptomHistoryFragment extends Fragment {
     private FirebaseAuth auth;
     private Button btnFilter;
     private ExtendedFloatingActionButton fabExport;
+    private String childId;
     List<SymptomEntry> fullHistoryList;
     List<SymptomEntry> currentHistoryList;
 
-    public SymptomHistoryFragment() {
+    public SymptomHistoryParentFragment() {
     }
 
     @Override
@@ -70,7 +70,7 @@ public class SymptomHistoryFragment extends Fragment {
         fabExport = view.findViewById(R.id.fab_export);
 
         auth = FirebaseAuth.getInstance();
-        db = FirebaseDatabase.getInstance().getReference("Checkins");
+        db = FirebaseDatabase.getInstance().getReference("checkins");
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new SymptomHistoryAdapter(new ArrayList<>());
@@ -79,8 +79,19 @@ public class SymptomHistoryFragment extends Fragment {
         fullHistoryList = new ArrayList<>();
 
         // load full history from database
-        String userId = auth.getCurrentUser().getUid();
-        db.child(userId)
+        childId = getArguments().getString("childId");
+        if (childId == null) {
+            Toast.makeText(getContext(), "Error: No child selected.", Toast.LENGTH_LONG).show();
+            return view;
+        }
+        // TODO: I need parent homepage pass me childId, before navigating here
+        /*
+        Bundle args = new Bundle();
+        args.putString("childId", selectedChildId);
+
+        navController.navigate(R.id.symptomParentCheckinFragment, args);
+         */
+        db.child(childId)
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     fullHistoryList.clear();
