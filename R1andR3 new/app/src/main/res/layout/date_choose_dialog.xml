@@ -1,0 +1,68 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/editMedicineName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:padding="12dp"
+        android:hint="Medicine Name"
+        android:inputType="text" />
+    <TextView
+        android:id="@+id/txtTypeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Medicine Type" />
+
+    <RadioGroup
+        android:id="@+id/rgMedicineType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbRescue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rescue"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/rbController"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Controller" />
+    </RadioGroup>
+    <EditText
+        android:id="@+id/editTotalDoses"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Total Doses"
+        android:inputType="number"
+        android:layout_marginTop="12dp" />
+    <TextView
+        android:id="@+id/txtPurchaseDate"
+        android:text="Select Purchase Date"
+        android:background="#DDDDDD"
+        android:layout_marginTop="12dp"
+        android:minHeight="48dp"
+        android:padding="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/txtExpiryDate"
+        android:text="Select Expiry Date"
+        android:background="#DDDDDD"
+        android:minHeight="48dp"
+        android:padding="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>
