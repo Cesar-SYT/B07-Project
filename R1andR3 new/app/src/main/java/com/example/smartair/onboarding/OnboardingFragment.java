@@ -61,7 +61,7 @@ public class OnboardingFragment extends Fragment {
                 ref.child("hasBeenOnboarding").setValue(true);
                 if ("PARENT".equals(userType)){
                     Intent intent = new Intent(requireContext(),
-                            com.example.smartair.ParentHomeActivity.class);
+                            com.example.smartair.ManageChildrenActivity.class);
                     startActivity(intent);
                     requireActivity().finish();
                 }
