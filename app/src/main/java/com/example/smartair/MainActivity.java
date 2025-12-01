@@ -1,8 +1,13 @@
 package com.example.smartair;
 
+import static com.example.smartair.model.UserRole.CHILD;
+import static com.example.smartair.model.UserRole.PARENT;
+
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.smartair.R;
+import com.example.smartair.model.UserRole;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +21,10 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.smartair.databinding.ActivityMainBinding;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,24 +40,43 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseApp.initializeApp(this);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        if (user != null) {
+            String key = user.getEmail().replace(".", ",");
+
+            DatabaseReference ref = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(key)
+                    .child("role");
+
+            ref.get().addOnSuccessListener(snapshot -> {
+                String role = snapshot.getValue(String.class);
+
+                if ("PARENT".equals(role)) {
+                    startActivity(new Intent(this, ParentHomeActivity.class));
+                }
+                else if ("CHILD".equals(role)) {
+                    startActivity(new Intent(this, ChildHomeActivity.class));
+                }
+                else {
+                    startActivity(new Intent(this, ProviderHomeActivity.class));
+                }
+
+                finish();
+            });
+
+            return; // ⭐ 这句非常重要，避免继续执行下面的 UI 初始化
+        }
+
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     @Override
