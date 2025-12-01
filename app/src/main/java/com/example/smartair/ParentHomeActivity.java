@@ -207,8 +207,12 @@ public class ParentHomeActivity extends AppCompatActivity {
             View container = findViewById(R.id.nav_host_fragment_parent_home);
             container.setVisibility(View.VISIBLE);
             container.requestLayout();
-            findViewById(R.id.nav_host_fragment_parent_home).setVisibility(View.VISIBLE);
-            findViewById(R.id.parentHomeRoot).setVisibility(View.GONE);
+
+            findViewById(R.id.parentTopBar).setVisibility(View.GONE);
+            findViewById(R.id.scrollParentHome).setVisibility(View.GONE);
+            findViewById(R.id.parentHomeRoot).setBackgroundColor(android.graphics.Color.TRANSPARENT);
+
+            findViewById(R.id.nav_host_fragment_parent_home).requestLayout();
 
             Bundle bundle = new Bundle();
             bundle.putString("childKey", currentChildKey);

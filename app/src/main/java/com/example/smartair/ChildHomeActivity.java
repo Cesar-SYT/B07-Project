@@ -137,8 +137,12 @@ public class ChildHomeActivity extends AppCompatActivity {
             View container = findViewById(R.id.nav_host_fragment_child_home);
             container.setVisibility(View.VISIBLE);
             container.requestLayout();
-            findViewById(R.id.nav_host_fragment_child_home).setVisibility(View.VISIBLE);
-            findViewById(R.id.childHomeRoot).setVisibility(View.GONE);
+
+            findViewById(R.id.childTopBar).setVisibility(View.GONE);
+            findViewById(R.id.scrollChildHome).setVisibility(View.GONE);
+            findViewById(R.id.childHomeRoot).setBackgroundColor(android.graphics.Color.TRANSPARENT);
+
+            findViewById(R.id.nav_host_fragment_child_home).requestLayout();
 
             NavController navController = Navigation.findNavController(
                     ChildHomeActivity.this,
