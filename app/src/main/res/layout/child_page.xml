@@ -9,6 +9,19 @@
     android:background="#FFFFFF"
     tools:context=".ChildHomeActivity">
 
+    <fragment
+        android:id="@+id/nav_host_fragment_child_home"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph_child"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/txtChildGreeting"
         android:layout_width="0dp"
@@ -77,6 +90,16 @@
                 android:layout_marginBottom="20dp"
                 android:padding="12dp"
                 android:text="Badges and Streak"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnSymptomCheckin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:padding="12dp"
+                android:text="Symptom Checkin"
                 android:textAllCaps="false"
                 android:textSize="18sp" />
 

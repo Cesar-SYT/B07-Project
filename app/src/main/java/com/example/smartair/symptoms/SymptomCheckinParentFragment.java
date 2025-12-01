@@ -39,6 +39,7 @@ public class SymptomCheckinParentFragment extends Fragment {
     private TextInputEditText editOtherTrigger;
     private Button btnSave;
     private Button btnExport;
+    private Button btnBack;
     private FirebaseAuth auth;
     private String childEmail;
 
@@ -66,11 +67,20 @@ public class SymptomCheckinParentFragment extends Fragment {
         editOtherTrigger = view.findViewById(R.id.edit_text_other_trigger);
         btnSave = view.findViewById(R.id.button_save);
         btnExport = view.findViewById(R.id.button_export);
+        btnBack = view.findViewById(R.id.button_back);
 
         recyclerViewHistory = view.findViewById(R.id.recycler_view_history);
         recyclerViewHistory.setLayoutManager(new LinearLayoutManager(getContext()));
         historyAdapter = new SymptomHistoryAdapter(historyList);
         recyclerViewHistory.setAdapter(historyAdapter);
+
+        btnBack.setOnClickListener(v -> {
+            requireActivity().findViewById(R.id.parentTopBar).setVisibility(View.VISIBLE);
+            requireActivity().findViewById(R.id.scrollParentHome).setVisibility(View.VISIBLE);
+
+            requireActivity().findViewById(R.id.nav_host_fragment_parent_home).setVisibility(View.GONE);
+
+        });
 
         // if at least one of the symptoms is selected, triggers becomes visible
         chipSleep.setOnCheckedStateChangeListener((group, checkedIds) -> {
@@ -83,18 +93,12 @@ public class SymptomCheckinParentFragment extends Fragment {
             updateTriggersVisibility();
         });
 
-        childEmail = getArguments().getString("childEmail");
+        childEmail = getArguments().getString("childKey");
         if (childEmail == null) {
             Toast.makeText(getContext(), "Error: No child selected.", Toast.LENGTH_LONG).show();
             return view;
         }
-        // TODO: I need parent homepage pass me childEmail, before navigating here
-        /*
-        Bundle args = new Bundle();
-        args.putString("childEmail", selectedChildEmail);
 
-        navController.navigate(R.id.symptomParentCheckinFragment, args);
-         */
         String key = childEmail.replace(".", ",");
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("users")
@@ -200,9 +204,11 @@ public class SymptomCheckinParentFragment extends Fragment {
 
         btnExport.setOnClickListener(v -> {
             Bundle args = new Bundle();
-            args.putString("childEmail", childEmail);
+            args.putString("childKey", childEmail);
 
-            NavController navController = Navigation.findNavController(requireView());
+            NavController navController =
+                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_parent_home);
+
             navController.navigate(R.id.symptomHistoryParentFragment, args);
         });
         return view;

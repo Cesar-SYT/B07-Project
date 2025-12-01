@@ -9,6 +9,19 @@
     android:background="#FAFAFA"
     tools:context=".ParentHomeActivity">
 
+    <fragment
+        android:id="@+id/nav_host_fragment_parent_home"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="visible"/>
+
 <LinearLayout
         android:id="@+id/parentTopBar"
         android:layout_width="0dp"
@@ -258,6 +271,18 @@
                     android:layout_marginStart="4dp"
                     android:text="Sharing"/>
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btnSymptomCheckin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:text="Symptom Checkin"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:background="#1976D2"
+                android:textColor="@android:color/white" />
 
 
         </LinearLayout>

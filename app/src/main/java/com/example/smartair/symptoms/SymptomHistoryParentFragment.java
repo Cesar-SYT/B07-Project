@@ -79,18 +79,12 @@ public class SymptomHistoryParentFragment extends Fragment {
         fullHistoryList = new ArrayList<>();
 
         // load full history from database
-        childEmail = getArguments().getString("childEmail");
+        childEmail = getArguments().getString("childKey");
         if (childEmail == null) {
             Toast.makeText(getContext(), "Error: No child selected.", Toast.LENGTH_LONG).show();
             return view;
         }
-        // TODO: I need parent homepage pass me childEmail, before navigating here
-        /*
-        Bundle args = new Bundle();
-        args.putString("childEmail", selectedChildEmail);
 
-        navController.navigate(R.id.symptomParentCheckinFragment, args);
-         */
         String key = childEmail.replace(".", ",");
         db = FirebaseDatabase.getInstance()
                 .getReference("users")

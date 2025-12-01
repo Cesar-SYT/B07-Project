@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -65,6 +67,7 @@ public class ParentHomeActivity extends AppCompatActivity {
     private Button btnAddLogParent;
     private Button btnViewReportParent;
     private Button btnSharingSettingsParent;
+    private Button btnSymptomCheckin;
 
     // 当前 child（后面可以改成真正的 Child model）
     private String currentChildName = "Child"; // creat a child
@@ -121,6 +124,7 @@ public class ParentHomeActivity extends AppCompatActivity {
         btnAddLogParent = findViewById(R.id.btnAddLogParent);
         btnViewReportParent = findViewById(R.id.btnViewReportParent);
         btnSharingSettingsParent = findViewById(R.id.btnSharingSettingsParent);
+        btnSymptomCheckin = findViewById(R.id.btnSymptomCheckin);
     }
 
     /**
@@ -187,6 +191,19 @@ public class ParentHomeActivity extends AppCompatActivity {
             // TODO: 打开 sharing 设置页面
             // Intent intent = new Intent(this, SharingSettingsActivity.class);
             // startActivity(intent);
+        });
+        btnSymptomCheckin.setOnClickListener(v -> {
+            findViewById(R.id.parentTopBar).setVisibility(View.GONE);
+            findViewById(R.id.scrollParentHome).setVisibility(View.GONE);
+            findViewById(R.id.nav_host_fragment_parent_home).setVisibility(View.VISIBLE);
+
+            Bundle bundle = new Bundle();
+            bundle.putString("childKey", currentChildKey);
+            NavController navController = Navigation.findNavController(
+                    ParentHomeActivity.this,
+                    R.id.nav_host_fragment_parent_home
+            );
+            navController.navigate(R.id.symptomCheckinParentFragment, bundle);
         });
     }
 

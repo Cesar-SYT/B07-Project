@@ -38,6 +38,7 @@ public class SymptomCheckinChildFragment extends Fragment {
     private TextInputEditText editOtherTrigger;
     private Button btnSave;
     private Button btnExport;
+    private Button btnBack;
     private FirebaseAuth auth;
 
     private RecyclerView recyclerViewHistory;
@@ -65,12 +66,19 @@ public class SymptomCheckinChildFragment extends Fragment {
         editOtherTrigger = view.findViewById(R.id.edit_text_other_trigger);
         btnSave = view.findViewById(R.id.button_save);
         btnExport = view.findViewById(R.id.button_export);
+        btnBack = view.findViewById(R.id.button_back);
 
         recyclerViewHistory = view.findViewById(R.id.recycler_view_history);
         recyclerViewHistory.setLayoutManager(new LinearLayoutManager(getContext()));
         historyAdapter = new SymptomHistoryAdapter(historyList);
         recyclerViewHistory.setAdapter(historyAdapter);
 
+        btnBack.setOnClickListener(v -> {
+            requireActivity().findViewById(R.id.txtChildGreeting).setVisibility(View.VISIBLE);
+            requireActivity().findViewById(R.id.scrollChildHome).setVisibility(View.VISIBLE);
+
+            requireActivity().findViewById(R.id.nav_host_fragment_child_home).setVisibility(View.GONE);
+        });
 
         // if at least one of the symptoms is selected, triggers becomes visible
         chipSleep.setOnCheckedStateChangeListener((group, checkedIds) -> {
@@ -102,8 +110,6 @@ public class SymptomCheckinChildFragment extends Fragment {
             historyList.sort((a, b) -> Long.compare(b.timestamp, a.timestamp));
             historyAdapter.updateList(historyList);
         });
-
-
 
         // final choices when button save is clicked
         btnSave.setOnClickListener(v -> {
@@ -195,8 +201,10 @@ public class SymptomCheckinChildFragment extends Fragment {
             Bundle args = new Bundle();
             args.putString("childEmail", childEmail);
 
-            NavController navController = Navigation.findNavController(requireView());
-            navController.navigate(R.id.symptomHistoryChildFragment, args);
+            NavController navController =
+                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_parent_home);
+
+            navController.navigate(R.id.symptomHistoryParentFragment, args);
         });
         return view;
     }

@@ -2,6 +2,7 @@ package com.example.smartair;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -9,6 +10,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.smartair.r3.InventoryActivity;
 import com.example.smartair.r3.MotivationActivity;
@@ -29,6 +32,7 @@ public class ChildHomeActivity extends AppCompatActivity {
     private Button btnLogMedicineChild;
     private Button btnTechniquePracticeChild;
     private Button btnBadgesandStreakChild;
+    private Button btnSymptomCheckin;
     private String name = "";
 
 
@@ -48,6 +52,7 @@ public class ChildHomeActivity extends AppCompatActivity {
         btnLogMedicineChild = findViewById(R.id.btnLogMedicineChild);
         btnTechniquePracticeChild = findViewById(R.id.btnTechniquePracticeChild);
         btnBadgesandStreakChild = findViewById(R.id.btnBadgesandStreakChild);
+        btnSymptomCheckin = findViewById(R.id.btnSymptomCheckin);
     }
 
     /**
@@ -117,6 +122,21 @@ public class ChildHomeActivity extends AppCompatActivity {
             intent.putExtra("childKey", getCurrentChildKey());
             intent.putExtra("childName", name);
             startActivity(intent);
+        });
+        btnSymptomCheckin.setOnClickListener(v -> {
+            findViewById(R.id.txtChildGreeting).setVisibility(View.GONE);
+            findViewById(R.id.scrollChildHome).setVisibility(View.GONE);
+            findViewById(R.id.nav_host_fragment_child_home).setVisibility(View.VISIBLE);
+
+            Bundle bundle = new Bundle();
+            bundle.putString("childKey", getCurrentChildKey());
+
+            NavController navController = Navigation.findNavController(
+                    ChildHomeActivity.this,
+                    R.id.nav_host_fragment_child_home
+            );
+
+            navController.navigate(R.id.symptomCheckinChildFragment, bundle);
         });
     }
 
