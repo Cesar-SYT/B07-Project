@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="32dp"
-    tools:context=".ui.StartFragment">
+    tools:context="StartFragment">
 
     <!-- Logo: 顶部约束到屏幕顶部，底部约束到登录按钮顶部 -->
     <ImageView
