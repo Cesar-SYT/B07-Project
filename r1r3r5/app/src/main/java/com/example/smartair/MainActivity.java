@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 String role = snapshot.getValue(String.class);
 
                 if ("PARENT".equals(role)) {
-                    startActivity(new Intent(this, ParentHomeActivity.class));
+                    startActivity(new Intent(this, ManageChildrenActivity.class));
                 }
                 else if ("CHILD".equals(role)) {
                     startActivity(new Intent(this, ChildHomeActivity.class));

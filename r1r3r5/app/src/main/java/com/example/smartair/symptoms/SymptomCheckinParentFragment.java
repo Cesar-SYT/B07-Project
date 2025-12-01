@@ -3,6 +3,7 @@ package com.example.smartair.symptoms;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -41,11 +42,17 @@ public class SymptomCheckinParentFragment extends Fragment {
     private Button btnExport;
     private Button btnBack;
     private FirebaseAuth auth;
-    private String childEmail;
+    private String key;
 
     private RecyclerView recyclerViewHistory;
     private SymptomHistoryAdapter historyAdapter;
     private List<SymptomEntry> historyList = new ArrayList<>();
+
+    private DatabaseReference userRef = FirebaseDatabase
+            .getInstance("https://smart-air-61888-default-rtdb.firebaseio.com/")
+            .getReference("users");;
+
+    private String childName;
 
 
     public SymptomCheckinParentFragment() {
@@ -73,16 +80,101 @@ public class SymptomCheckinParentFragment extends Fragment {
         recyclerViewHistory.setLayoutManager(new LinearLayoutManager(getContext()));
         historyAdapter = new SymptomHistoryAdapter(historyList);
         recyclerViewHistory.setAdapter(historyAdapter);
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+                if (key == null || key.isEmpty()) {
+                    Toast.makeText(getContext(), "Error: No child selected.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                userRef.child(key)
+                        .child("displayName")
+                        .get()
+                        .addOnSuccessListener(snapshot -> {
+                            String name = snapshot.getValue(String.class);
+                            if (name != null && !name.isEmpty()) {
+                                childName = name;
+                            } else {
+                                childName = "(no name)";
+                            }
+
+                            Intent intent = new Intent(requireActivity(), com.example.smartair.ParentHomeActivity.class);
+                            intent.putExtra("childKey", key);
+                            intent.putExtra("childName", childName);
+                            startActivity(intent);
+
+                            requireActivity().finish();
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(
+                                    getContext(),
+                                    "Failed to load name: " + e.getMessage(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+
+                            Intent intent = new Intent(requireActivity(), com.example.smartair.ParentHomeActivity.class);
+                            intent.putExtra("childKey", key);
+                            startActivity(intent);
+
+                            requireActivity().finish();
+                        });
+            }
+        };
+
+        requireActivity().getOnBackPressedDispatcher()
+                .addCallback(getViewLifecycleOwner(), callback);
 
         btnBack.setOnClickListener(v -> {
-            requireActivity().findViewById(R.id.parentHomeRoot).setVisibility(View.VISIBLE);
-            requireActivity().findViewById(R.id.nav_host_fragment_parent_home).setVisibility(View.GONE);
+            if (key == null || key.isEmpty()) {
+                Toast.makeText(getContext(), "Error: No child selected.", Toast.LENGTH_LONG).show();
+                return;
+            }
 
-            NavController navController =
-                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_parent_home);
-            navController.popBackStack();
+            // 这里的 userRef 指向的是 /users 根节点（你上面已经初始化）
+            userRef.child(key)
+                    .child("displayName")
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        String name = snapshot.getValue(String.class);
+                        if (name != null && !name.isEmpty()) {
+                            childName = name;
+                        } else {
+                            childName = "(no name)";
+                        }
 
+                        /*
+                        Toast.makeText(
+                                getContext(),
+                                "Current name is: " + childName,
+                                Toast.LENGTH_LONG
+                        ).show();
+                         */
+
+                        Intent intent = new Intent(requireActivity(), com.example.smartair.ParentHomeActivity.class);
+                        intent.putExtra("childKey", key);
+                        intent.putExtra("childName", childName);
+                        startActivity(intent);
+                        requireActivity().finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        // 读名字失败也给个提示，然后至少带着 key 回去
+                        Toast.makeText(
+                                getContext(),
+                                "Failed to load name: " + e.getMessage(),
+                                Toast.LENGTH_LONG
+                        ).show();
+
+                        Intent intent = new Intent(requireActivity(), com.example.smartair.ParentHomeActivity.class);
+                        intent.putExtra("childKey", key);
+                        startActivity(intent);
+                        requireActivity().finish();
+                    });
         });
+
+
+
 
         // if at least one of the symptoms is selected, triggers becomes visible
         chipSleep.setOnCheckedStateChangeListener((group, checkedIds) -> {
@@ -95,13 +187,21 @@ public class SymptomCheckinParentFragment extends Fragment {
             updateTriggersVisibility();
         });
 
-        childEmail = getArguments().getString("childKey");
-        if (childEmail == null) {
+        Bundle Args = getArguments();
+        if (Args == null  || !Args.containsKey("childKey")) {
+            // 没有任何参数，也先当作「还没真正进入这个页面」，不弹 Toast
+            return view;
+        }
+
+        key = Args.getString("childKey");
+        if (key == null || key.isEmpty()) {
+            userRef = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(key);
             Toast.makeText(getContext(), "Error: No child selected.", Toast.LENGTH_LONG).show();
             return view;
         }
 
-        String key = childEmail.replace(".", ",");
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("users")
                 .child(key)
@@ -206,7 +306,7 @@ public class SymptomCheckinParentFragment extends Fragment {
 
         btnExport.setOnClickListener(v -> {
             Bundle args = new Bundle();
-            args.putString("childKey", childEmail);
+            args.putString("childKey", key);
 
             NavController navController =
                     Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_parent_home);

@@ -2,6 +2,7 @@ package com.example.smartair.symptoms;
 
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
@@ -22,11 +23,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartair.R;
 import com.example.smartair.r5model.SymptomEntry;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,6 +48,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.LongConsumer;
 
+
+
 public class SymptomHistoryParentFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -53,7 +58,7 @@ public class SymptomHistoryParentFragment extends Fragment {
     private FirebaseAuth auth;
     private Button btnFilter;
     private ExtendedFloatingActionButton fabExport;
-    private String childEmail;
+    private String key;
     List<SymptomEntry> fullHistoryList;
     List<SymptomEntry> currentHistoryList;
 
@@ -78,14 +83,25 @@ public class SymptomHistoryParentFragment extends Fragment {
 
         fullHistoryList = new ArrayList<>();
 
+        MaterialToolbar toolbar = view.findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v1 -> {
+            // 用当前被点击的 view（toolbar）去找 NavController，而不是 Activity+id
+            Navigation.findNavController(v1).popBackStack();
+        });
         // load full history from database
-        childEmail = getArguments().getString("childKey");
-        if (childEmail == null) {
+        Bundle args = getArguments();
+
+        if (args == null || !args.containsKey("childKey")) {
+            return view;
+        }
+
+        key = args.getString("childKey", null);
+
+        if (key == null || key.isEmpty()) {
             Toast.makeText(getContext(), "Error: No child selected.", Toast.LENGTH_LONG).show();
             return view;
         }
 
-        String key = childEmail.replace(".", ",");
         db = FirebaseDatabase.getInstance()
                 .getReference("users")
                 .child(key)
@@ -291,6 +307,14 @@ public class SymptomHistoryParentFragment extends Fragment {
         });
     }
 
+    /** 导出后统一返回到 ManageChildrenActivity */
+    private void goBackToManageChildren() {
+        Intent intent = new Intent(requireActivity(), com.example.smartair.ParentHomeActivity.class);
+        startActivity(intent);
+        // 结束当前 Activity（ParentHomeActivity），避免返回栈回到症状页面
+        requireActivity().finish();
+    }
+
     private void exportPDF(List<SymptomEntry> entries) {
         PdfDocument pdfDocument = new PdfDocument();
         Paint paint = new Paint();
@@ -312,26 +336,59 @@ public class SymptomHistoryParentFragment extends Fragment {
         paint.setFakeBoldText(false);
 
         for (SymptomEntry entry : entries) {
-            if (y > 760) { // if it is too long, start at another page
+
+            if (y > 760) {
                 canvas.drawText("Page " + pageNumber, 290, 802, pageNumberPaint);
                 pdfDocument.finishPage(page);
 
                 pageNumber++;
-                pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pageNumber).create();
-                page = pdfDocument.startPage(pageInfo);
+                PdfDocument.PageInfo pageInfo2 = new PdfDocument.PageInfo.Builder(595, 842, pageNumber).create();
+                page = pdfDocument.startPage(pageInfo2);
                 canvas = page.getCanvas();
                 y = 50;
             }
 
-            canvas.drawText("Date: " + formatDate(entry.timestamp), x, y, paint);
+            String dateText = formatDate(entry.timestamp);
+
+            String sleepText = (entry.sleep == null || entry.sleep.isEmpty())
+                    ? "N/A"
+                    : entry.sleep;
+
+            String activityText = (entry.activity == null || entry.activity.isEmpty())
+                    ? "N/A"
+                    : entry.activity;
+
+            String coughText = (entry.cough == null || entry.cough.isEmpty())
+                    ? "N/A"
+                    : entry.cough;
+
+            String triggersText;
+            if (entry.triggers == null || entry.triggers.isEmpty()) {
+                triggersText = "None";
+            } else {
+                triggersText = TextUtils.join(", ", entry.triggers);
+            }
+
+            String enteredByText = (entry.enteredBy == null || entry.enteredBy.isEmpty())
+                    ? "Unknown"
+                    : entry.enteredBy;
+
+            canvas.drawText("Date: " + dateText, x, y, paint);
             y += 20;
-            canvas.drawText("Sleep: " + entry.sleep + ", Activity: " + entry.activity + ", Cough: " + entry.cough, x, y, paint);
+
+            canvas.drawText("Sleep: " + sleepText
+                            + ", Activity: " + activityText
+                            + ", Cough: " + coughText,
+                    x, y, paint);
             y += 20;
-            canvas.drawText("Triggers: " + String.join(", ", entry.triggers), x, y, paint);
+
+            canvas.drawText("Triggers: " + triggersText, x, y, paint);
             y += 20;
-            canvas.drawText("Entered By: " + entry.enteredBy, x, y, paint);
+
+            canvas.drawText("Entered By: " + enteredByText, x, y, paint);
             y += 30;
         }
+
 
         pdfDocument.finishPage(page);
 
@@ -352,11 +409,14 @@ public class SymptomHistoryParentFragment extends Fragment {
                 pdfDocument.writeTo(os);
                 os.close();
                 Toast.makeText(getContext(), "PDF saved to Download folder", Toast.LENGTH_LONG).show();
-            }
-            // API 24–28: save to app external directory
-            else {
+
+                // ✅ 导出成功后回到 ManageChildrenActivity
+                goBackToManageChildren();
+
+            } else {
+                // API 24–28: save to app external directory
                 File dir = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-                if (!dir.exists()) dir.mkdirs();
+                if (dir != null && !dir.exists()) dir.mkdirs();
                 File file = new File(dir, filename);
 
                 FileOutputStream fos = new FileOutputStream(file);
@@ -365,6 +425,9 @@ public class SymptomHistoryParentFragment extends Fragment {
 
                 Toast.makeText(getContext(),
                         "PDF Saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+
+                // ✅ 导出成功后回到 ManageChildrenActivity
+                goBackToManageChildren();
             }
         } catch (Exception e) {
             Toast.makeText(getContext(), "PDF export failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -378,23 +441,23 @@ public class SymptomHistoryParentFragment extends Fragment {
         String filename = "symptom_report_" + System.currentTimeMillis() + ".csv";
         StringBuilder sb = new StringBuilder();
 
-        // CSV Header
+        // Header
         sb.append("Date,Sleep,Activity,Cough,Triggers,EnteredBy\n");
 
-        // Data rows
         for (SymptomEntry e : entries) {
 
             String date = formatDate(e.timestamp);
-            String sleep = e.sleep == null ? "" : e.sleep;
-            String activity = e.activity == null ? "" : e.activity;
-            String cough = e.cough == null ? "" : e.cough;
-            String enteredBy = e.enteredBy == null ? "" : e.enteredBy;
+
+            String sleep = (e.sleep == null) ? "" : e.sleep;
+            String activity = (e.activity == null) ? "" : e.activity;
+            String cough = (e.cough == null) ? "" : e.cough;
+            String enteredBy = (e.enteredBy == null) ? "" : e.enteredBy;
 
             String triggers;
             if (e.triggers == null || e.triggers.isEmpty()) {
                 triggers = "";
             } else {
-                // triggers are separated by ";"
+                // 用 ; 连接，避免逗号干扰 CSV 列
                 triggers = TextUtils.join(";", e.triggers);
             }
 
@@ -403,16 +466,17 @@ public class SymptomHistoryParentFragment extends Fragment {
                     .append("\"").append(activity).append("\"").append(",")
                     .append("\"").append(cough).append("\"").append(",")
                     .append("\"").append(triggers).append("\"").append(",")
-                    .append(enteredBy).append("\n");
+                    .append(enteredBy)
+                    .append("\n");
         }
 
         try {
-            // API 29+: save to Download
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
                 values.put(MediaStore.Downloads.MIME_TYPE, "text/csv");
                 values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+
                 Uri uri = requireContext().getContentResolver()
                         .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
                 OutputStream os = requireContext().getContentResolver().openOutputStream(uri);
@@ -420,25 +484,28 @@ public class SymptomHistoryParentFragment extends Fragment {
                 os.close();
 
                 Toast.makeText(getContext(), "CSV saved to Download folder", Toast.LENGTH_LONG).show();
-            }
-            // API 24–28: save to app external directory
-            else {
+            } else {
                 File dir = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-                if (!dir.exists()) dir.mkdirs();
+                if (dir != null && !dir.exists()) dir.mkdirs();
                 File file = new File(dir, filename);
 
                 FileOutputStream fos = new FileOutputStream(file);
                 fos.write(sb.toString().getBytes());
                 fos.close();
 
-                Toast.makeText(getContext(),
-                        "CSV saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+                Toast.makeText(
+                        getContext(),
+                        "CSV saved to: " + file.getAbsolutePath(),
+                        Toast.LENGTH_LONG
+                ).show();
             }
 
         } catch (Exception e) {
-            Toast.makeText(getContext(),
+            Toast.makeText(
+                    getContext(),
                     "CSV export failed: " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG
+            ).show();
         }
     }
 }

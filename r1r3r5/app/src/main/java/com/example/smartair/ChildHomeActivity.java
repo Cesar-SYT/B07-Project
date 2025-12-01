@@ -143,7 +143,8 @@ public class ChildHomeActivity extends AppCompatActivity {
             findViewById(R.id.childHomeRoot).setBackgroundColor(android.graphics.Color.TRANSPARENT);
 
             findViewById(R.id.nav_host_fragment_child_home).requestLayout();
-
+            Bundle bundle = new Bundle();
+            bundle.putString("childKey", getCurrentChildKey());
             NavController navController = Navigation.findNavController(
                     ChildHomeActivity.this,
                     R.id.nav_host_fragment_child_home

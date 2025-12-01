@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -45,7 +46,12 @@ public class SymptomCheckinChildFragment extends Fragment {
     private SymptomHistoryAdapter historyAdapter;
     private List<SymptomEntry> historyList = new ArrayList<>();
 
+    private String key;
+    private DatabaseReference userRef = FirebaseDatabase
+            .getInstance("https://smart-air-61888-default-rtdb.firebaseio.com/")
+            .getReference("users");;
 
+    private String childName;
 
     public SymptomCheckinChildFragment() {
         // Required empty public constructor
@@ -72,14 +78,71 @@ public class SymptomCheckinChildFragment extends Fragment {
         recyclerViewHistory.setLayoutManager(new LinearLayoutManager(getContext()));
         historyAdapter = new SymptomHistoryAdapter(historyList);
         recyclerViewHistory.setAdapter(historyAdapter);
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent intent = new Intent(requireActivity(), com.example.smartair.ChildHomeActivity.class);
+                startActivity(intent);
+                requireActivity().finish();
+            }
+        };
 
+        requireActivity().getOnBackPressedDispatcher()
+                .addCallback(getViewLifecycleOwner(), callback);
+
+        if (getActivity() != null && getActivity().getIntent() != null) {
+            key = getActivity().getIntent().getStringExtra("childKey");
+        }
+
+        if ((key == null || key.isEmpty()) && auth.getCurrentUser() != null) {
+            String childEmail = auth.getCurrentUser().getEmail();
+            if (childEmail != null) {
+                key = childEmail.replace(".", ",");
+            }
+        }
+
+        if (key == null || key.isEmpty()) {
+            Toast.makeText(getContext(), "Error: No child selected.", Toast.LENGTH_LONG).show();
+            return view;
+        }
         btnBack.setOnClickListener(v -> {
-            requireActivity().findViewById(R.id.childHomeRoot).setVisibility(View.VISIBLE);
-            requireActivity().findViewById(R.id.nav_host_fragment_child_home).setVisibility(View.GONE);
+            userRef.child(key)
+                    .child("displayName")
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        String name = snapshot.getValue(String.class);
+                        if (name != null && !name.isEmpty()) {
+                            childName = name;
+                        } else {
+                            childName = "(no name)";
+                        }
 
-            NavController navController =
-                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_child_home);
-            navController.popBackStack();
+                        /*
+                        Toast.makeText(
+                                getContext(),
+                                "Current name is: " + childName,
+                                Toast.LENGTH_LONG
+                        ).show();
+                         */
+
+                        Intent intent = new Intent(requireActivity(), com.example.smartair.ChildHomeActivity.class);
+                        intent.putExtra("childKey", key);
+                        intent.putExtra("childName", childName);
+                        startActivity(intent);
+                        requireActivity().finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(
+                                getContext(),
+                                "Failed to load name: " + e.getMessage(),
+                                Toast.LENGTH_LONG
+                        ).show();
+
+                        Intent intent = new Intent(requireActivity(), com.example.smartair.ChildHomeActivity.class);
+                        intent.putExtra("childKey", key);
+                        startActivity(intent);
+                        requireActivity().finish();
+                    });
         });
 
         // if at least one of the symptoms is selected, triggers becomes visible

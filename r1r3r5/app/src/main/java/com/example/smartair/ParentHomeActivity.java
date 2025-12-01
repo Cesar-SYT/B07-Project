@@ -69,7 +69,6 @@ public class ParentHomeActivity extends AppCompatActivity {
     private Button btnViewReportParent;
     private Button btnSharingSettingsParent;
     private Button btnSymptomCheckin;
-    private Button btnSignout;
 
     // 当前 child（后面可以改成真正的 Child model）
     private String currentChildName = "Child"; // creat a child
@@ -129,13 +128,7 @@ public class ParentHomeActivity extends AppCompatActivity {
         btnViewReportParent = findViewById(R.id.btnViewReportParent);
         btnSharingSettingsParent = findViewById(R.id.btnSharingSettingsParent);
         btnSymptomCheckin = findViewById(R.id.btnSymptomCheckin);
-        btnSignout = findViewById(R.id.btnParentSignOut);
 
-        btnSignout.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(ParentHomeActivity.this, MainActivity.class));
-            finish();
-        });
     }
 
     /**
@@ -143,7 +136,7 @@ public class ParentHomeActivity extends AppCompatActivity {
      * 这里先不做 Spinner 的数据绑定，后面接真正列表再加。
      */
     private void setupTopBar() {
-        txtParentTitle.setText("SMART AIR – Parent");
+        txtParentTitle.setText("SMART AIR");
 
         // 默认显示当前 child 名字
         txtCurrentChildName.setText("Child: " + currentChildName);

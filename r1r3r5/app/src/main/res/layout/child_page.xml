@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:padding="12dp"
-                android:text="Daily Check"
+                android:text="Medicine Record"
                 android:textSize="18sp"
                 android:textAllCaps="false"/>
 

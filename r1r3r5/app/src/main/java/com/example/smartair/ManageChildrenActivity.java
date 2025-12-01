@@ -41,6 +41,20 @@ public class ManageChildrenActivity extends AppCompatActivity {
         Button btnManage = findViewById(R.id.btn_manage_children);
         rvChildren = findViewById(R.id.rv_children);
         tvNoChildren = findViewById(R.id.tv_no_children);
+        // Sign Out button
+        Button btnSignOut = findViewById(R.id.btnParentSignOut);
+
+        btnSignOut.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+
+            // jump to MainActivity
+            Intent intent = new Intent(ManageChildrenActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+
+            finish();
+        });
+
 
         // 设置 RecyclerView
         rvChildren.setLayoutManager(new LinearLayoutManager(this));
