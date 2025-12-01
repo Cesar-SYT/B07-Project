@@ -96,8 +96,6 @@ public class ManageChildrenActivity extends AppCompatActivity {
         childrenRef = userRef
                 .child(uid)
                 .child("childid");
-
-        loadChildrenOnce();
     }
 
     @Override
