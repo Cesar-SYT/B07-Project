@@ -97,10 +97,16 @@ public class ManageChildrenActivity extends AppCompatActivity {
                 .child(uid)
                 .child("childid");
 
-        addRealtimeListener();
+        loadChildrenOnce();
     }
 
-    private void addRealtimeListener() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadChildrenOnce();
+    }
+
+    private void loadChildrenOnce() {
 
         childrenRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
