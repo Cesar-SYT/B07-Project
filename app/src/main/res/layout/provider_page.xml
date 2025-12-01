@@ -29,6 +29,15 @@
             android:textSize="20sp"
             android:textStyle="bold"/>
 
+        <Button
+            android:id="@+id/btnProviderSignOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign Out"
+            android:textSize="12sp"
+            android:padding="6dp"
+            android:layout_marginEnd="8dp"/>
+
         <Spinner
             android:id="@+id/spinnerPatientSelector"
             android:layout_width="wrap_content"

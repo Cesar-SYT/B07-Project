@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartair.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,7 @@ public class ParentHomeActivity extends AppCompatActivity {
     private Button btnViewReportParent;
     private Button btnSharingSettingsParent;
     private Button btnSymptomCheckin;
+    private Button btnSignout;
 
     // 当前 child（后面可以改成真正的 Child model）
     private String currentChildName = "Child"; // creat a child
@@ -125,6 +127,13 @@ public class ParentHomeActivity extends AppCompatActivity {
         btnViewReportParent = findViewById(R.id.btnViewReportParent);
         btnSharingSettingsParent = findViewById(R.id.btnSharingSettingsParent);
         btnSymptomCheckin = findViewById(R.id.btnSymptomCheckin);
+        btnSignout = findViewById(R.id.btnParentSignOut);
+
+        btnSignout.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(ParentHomeActivity.this, MainActivity.class));
+            finish();
+        });
     }
 
     /**

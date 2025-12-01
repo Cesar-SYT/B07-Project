@@ -34,6 +34,7 @@ public class ChildHomeActivity extends AppCompatActivity {
     private Button btnBadgesandStreakChild;
     private Button btnSymptomCheckin;
     private String name = "";
+    private Button btnSignout;
 
 
     @Override
@@ -53,6 +54,13 @@ public class ChildHomeActivity extends AppCompatActivity {
         btnTechniquePracticeChild = findViewById(R.id.btnTechniquePracticeChild);
         btnBadgesandStreakChild = findViewById(R.id.btnBadgesandStreakChild);
         btnSymptomCheckin = findViewById(R.id.btnSymptomCheckin);
+        btnSignout = findViewById(R.id.btnChildSignOut);
+
+        btnSignout.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(ChildHomeActivity.this, MainActivity.class));
+            finish();
+        });
     }
 
     /**

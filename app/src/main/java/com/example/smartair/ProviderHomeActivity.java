@@ -1,5 +1,6 @@
 package com.example.smartair;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -12,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartair.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +32,7 @@ public class ProviderHomeActivity extends AppCompatActivity {
     private TextView txtEventSample1;
 
     private Button btnExportReportProvider;
+    private Button btnSignout;
 
     // demo 患者列表
     private final List<String> demoPatients = Arrays.asList("Alex", "Jamie", "Chris");
@@ -58,6 +61,14 @@ public class ProviderHomeActivity extends AppCompatActivity {
         txtEventSample1 = findViewById(R.id.txtEventSample1);
 
         btnExportReportProvider = findViewById(R.id.btnExportReportProvider);
+        btnSignout = findViewById(R.id.btnProviderSignOut);
+
+        btnSignout.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(ProviderHomeActivity.this, MainActivity.class));
+            finish();
+        });
+
     }
 
     private void setupPatientSpinner() {
