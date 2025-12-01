@@ -75,10 +75,12 @@ public class SymptomCheckinParentFragment extends Fragment {
         recyclerViewHistory.setAdapter(historyAdapter);
 
         btnBack.setOnClickListener(v -> {
-            requireActivity().findViewById(R.id.parentTopBar).setVisibility(View.VISIBLE);
-            requireActivity().findViewById(R.id.scrollParentHome).setVisibility(View.VISIBLE);
-
+            requireActivity().findViewById(R.id.parentHomeRoot).setVisibility(View.VISIBLE);
             requireActivity().findViewById(R.id.nav_host_fragment_parent_home).setVisibility(View.GONE);
+
+            NavController navController =
+                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_parent_home);
+            navController.popBackStack();
 
         });
 

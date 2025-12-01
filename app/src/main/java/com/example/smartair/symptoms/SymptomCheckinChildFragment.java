@@ -74,10 +74,12 @@ public class SymptomCheckinChildFragment extends Fragment {
         recyclerViewHistory.setAdapter(historyAdapter);
 
         btnBack.setOnClickListener(v -> {
-            requireActivity().findViewById(R.id.txtChildGreeting).setVisibility(View.VISIBLE);
-            requireActivity().findViewById(R.id.scrollChildHome).setVisibility(View.VISIBLE);
-
+            requireActivity().findViewById(R.id.childHomeRoot).setVisibility(View.VISIBLE);
             requireActivity().findViewById(R.id.nav_host_fragment_child_home).setVisibility(View.GONE);
+
+            NavController navController =
+                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_child_home);
+            navController.popBackStack();
         });
 
         // if at least one of the symptoms is selected, triggers becomes visible
@@ -198,13 +200,10 @@ public class SymptomCheckinChildFragment extends Fragment {
         });
 
         btnExport.setOnClickListener(v -> {
-            Bundle args = new Bundle();
-            args.putString("childEmail", childEmail);
-
             NavController navController =
-                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_parent_home);
+                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_child_home);
 
-            navController.navigate(R.id.symptomHistoryParentFragment, args);
+            navController.navigate(R.id.symptomHistoryChildFragment);
         });
         return view;
     }

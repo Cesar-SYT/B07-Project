@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             });
 
-            return; // ⭐ 这句非常重要，避免继续执行下面的 UI 初始化
+            return;
         }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());

@@ -9,6 +9,7 @@
     android:background="#FFFFFF"
     tools:context=".ChildHomeActivity">
 
+    <!-- Fragment container (hidden initially) -->
     <fragment
         android:id="@+id/nav_host_fragment_child_home"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -20,14 +21,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
+    <!-- TOP BAR -->
     <LinearLayout
         android:id="@+id/childTopBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#E3F2FD"
         android:orientation="horizontal"
+        android:background="#E3F2FD"
         android:padding="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,10 +40,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Hi"
+            android:text="Hi, user!"
             android:textSize="22sp"
             android:textStyle="bold"
-            tools:text="Hi"/>
+            tools:text="Hi, Alex!"/>
 
         <Button
             android:id="@+id/btnChildSignOut"
@@ -55,13 +57,13 @@
             android:background="#D32F2F"/>
     </LinearLayout>
 
-
+    <!-- MAIN SCROLL CONTENT -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollChildHome"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/txtChildGreeting"
+        app:layout_constraintTop_toBottomOf="@id/childTopBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -80,8 +82,8 @@
                 android:layout_marginBottom="20dp"
                 android:padding="12dp"
                 android:text="Daily Check"
-                android:textAllCaps="false"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textAllCaps="false"/>
 
             <Button
                 android:id="@+id/btnLogMedicineChild"
@@ -90,8 +92,8 @@
                 android:layout_marginBottom="12dp"
                 android:padding="12dp"
                 android:text="Log Medicine"
-                android:textAllCaps="false"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textAllCaps="false"/>
 
             <Button
                 android:id="@+id/btnTechniquePracticeChild"
@@ -100,8 +102,8 @@
                 android:layout_marginBottom="12dp"
                 android:padding="12dp"
                 android:text="Practice Inhaler Technique"
-                android:textAllCaps="false"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:textAllCaps="false"/>
 
             <Button
                 android:id="@+id/btnBadgesandStreakChild"
@@ -110,8 +112,8 @@
                 android:layout_marginBottom="20dp"
                 android:padding="12dp"
                 android:text="Badges and Streak"
-                android:textAllCaps="false"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textAllCaps="false"/>
 
             <Button
                 android:id="@+id/btnSymptomCheckin"
@@ -120,8 +122,8 @@
                 android:layout_marginBottom="20dp"
                 android:padding="12dp"
                 android:text="Symptom Checkin"
-                android:textAllCaps="false"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textAllCaps="false"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

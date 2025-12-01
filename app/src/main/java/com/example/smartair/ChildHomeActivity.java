@@ -42,6 +42,8 @@ public class ChildHomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.child_page);  // 对应 child_page.xml
 
+        findViewById(R.id.nav_host_fragment_child_home).setVisibility(View.GONE);
+
         initViews();
         loadChildName();
         setupClickListeners();
@@ -132,19 +134,18 @@ public class ChildHomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
         btnSymptomCheckin.setOnClickListener(v -> {
-            findViewById(R.id.txtChildGreeting).setVisibility(View.GONE);
-            findViewById(R.id.scrollChildHome).setVisibility(View.GONE);
+            View container = findViewById(R.id.nav_host_fragment_child_home);
+            container.setVisibility(View.VISIBLE);
+            container.requestLayout();
             findViewById(R.id.nav_host_fragment_child_home).setVisibility(View.VISIBLE);
-
-            Bundle bundle = new Bundle();
-            bundle.putString("childKey", getCurrentChildKey());
+            findViewById(R.id.childHomeRoot).setVisibility(View.GONE);
 
             NavController navController = Navigation.findNavController(
                     ChildHomeActivity.this,
                     R.id.nav_host_fragment_child_home
             );
 
-            navController.navigate(R.id.symptomCheckinChildFragment, bundle);
+            navController.navigate(R.id.symptomCheckinChildFragment);
         });
     }
 

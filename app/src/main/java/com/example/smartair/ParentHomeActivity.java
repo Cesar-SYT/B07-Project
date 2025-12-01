@@ -81,6 +81,8 @@ public class ParentHomeActivity extends AppCompatActivity {
         // 布局文件名：parent_page.xml
         setContentView(R.layout.parent_page);
 
+        findViewById(R.id.nav_host_fragment_parent_home).setVisibility(View.GONE);
+
         initViews();
         setupTopBar();
         setupTrendSelector();
@@ -202,9 +204,11 @@ public class ParentHomeActivity extends AppCompatActivity {
             // startActivity(intent);
         });
         btnSymptomCheckin.setOnClickListener(v -> {
-            findViewById(R.id.parentTopBar).setVisibility(View.GONE);
-            findViewById(R.id.scrollParentHome).setVisibility(View.GONE);
+            View container = findViewById(R.id.nav_host_fragment_parent_home);
+            container.setVisibility(View.VISIBLE);
+            container.requestLayout();
             findViewById(R.id.nav_host_fragment_parent_home).setVisibility(View.VISIBLE);
+            findViewById(R.id.parentHomeRoot).setVisibility(View.GONE);
 
             Bundle bundle = new Bundle();
             bundle.putString("childKey", currentChildKey);
