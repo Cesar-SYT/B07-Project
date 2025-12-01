@@ -102,7 +102,8 @@ public class ManageChildrenActivity extends AppCompatActivity {
 
     private void addRealtimeListener() {
 
-        childrenRef.addValueEventListener(new ValueEventListener() {
+        childrenRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
