@@ -133,7 +133,6 @@ public class SymptomHistoryChildFragment extends Fragment {
         return view;
     }
 
-    /** 导出后回到 ChildHomeActivity（你要的 intent 方法） */
     private void returnToChildHome() {
         Intent intent = new Intent(requireActivity(), ChildHomeActivity.class);
         startActivity(intent);
@@ -219,7 +218,6 @@ public class SymptomHistoryChildFragment extends Fragment {
                     ok &= (e.cough != null && !e.cough.equals("No coughing"));
                 }
 
-                // filter by triggers（注意 e.triggers 可能为 null）
                 if (e.triggers == null) {
                     if (cbExercise.isChecked()
                             || cbColdAir.isChecked()
@@ -351,7 +349,6 @@ public class SymptomHistoryChildFragment extends Fragment {
                 y = 50;
             }
 
-            // 对所有字段做 null 保护
             String dateText = formatDate(entry.timestamp);
             String sleepText = entry.sleep == null ? "" : entry.sleep;
             String activityText = entry.activity == null ? "" : entry.activity;
@@ -362,7 +359,6 @@ public class SymptomHistoryChildFragment extends Fragment {
             if (entry.triggers == null || entry.triggers.isEmpty()) {
                 triggersText = "";
             } else {
-                // 手动 join，避免 String.join 在 null 上崩溃
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < entry.triggers.size(); i++) {
                     if (i > 0) sb.append(", ");
@@ -384,11 +380,9 @@ public class SymptomHistoryChildFragment extends Fragment {
 
         pdfDocument.finishPage(page);
 
-        // save to file
         String filename = "symptom_report_" + System.currentTimeMillis() + ".pdf";
 
         try {
-            // API 29+: save to Download
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
@@ -402,7 +396,6 @@ public class SymptomHistoryChildFragment extends Fragment {
                 os.close();
                 Toast.makeText(getContext(), "PDF saved to Download folder", Toast.LENGTH_LONG).show();
             }
-            // API 24–28: save to app external directory
             else {
                 File dir = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
                 if (!dir.exists()) dir.mkdirs();
@@ -416,7 +409,6 @@ public class SymptomHistoryChildFragment extends Fragment {
                         "PDF Saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
             }
 
-            // ✅ 导出成功后返回 ChildHomeActivity
             returnToChildHome();
 
         } catch (Exception e) {
@@ -464,7 +456,6 @@ public class SymptomHistoryChildFragment extends Fragment {
         }
 
         try {
-            // API 29+: save to Download
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
@@ -478,7 +469,6 @@ public class SymptomHistoryChildFragment extends Fragment {
 
                 Toast.makeText(getContext(), "CSV saved to Download folder", Toast.LENGTH_LONG).show();
             }
-            // API 24–28: save to app external directory
             else {
                 File dir = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
                 if (!dir.exists()) dir.mkdirs();
@@ -492,7 +482,6 @@ public class SymptomHistoryChildFragment extends Fragment {
                         "CSV saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
             }
 
-            // ✅ 导出成功后返回 ChildHomeActivity
             returnToChildHome();
 
         } catch (Exception e) {

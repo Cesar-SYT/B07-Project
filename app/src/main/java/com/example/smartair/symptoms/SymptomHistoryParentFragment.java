@@ -306,11 +306,15 @@ public class SymptomHistoryParentFragment extends Fragment {
         });
     }
 
-    /** 导出后统一返回到 ManageChildrenActivity */
     private void goBackToManageChildren() {
+        if (key == null || key.isEmpty()) {
+            requireActivity().finish();
+            return;
+        }
+
         Intent intent = new Intent(requireActivity(), com.example.smartair.ParentHomeActivity.class);
+        intent.putExtra("childKey", key);
         startActivity(intent);
-        // 结束当前 Activity（ParentHomeActivity），避免返回栈回到症状页面
         requireActivity().finish();
     }
 
@@ -323,7 +327,7 @@ public class SymptomHistoryParentFragment extends Fragment {
         int y = 50;
         int pageNumber = 1;
 
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pageNumber).create(); // A4尺寸
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pageNumber).create();
         PdfDocument.Page page = pdfDocument.startPage(pageInfo);
         Canvas canvas = page.getCanvas();
 
@@ -395,7 +399,6 @@ public class SymptomHistoryParentFragment extends Fragment {
         String filename = "symptom_report_" + System.currentTimeMillis() + ".pdf";
 
         try {
-            // API 29+: save to Download
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
@@ -409,7 +412,6 @@ public class SymptomHistoryParentFragment extends Fragment {
                 os.close();
                 Toast.makeText(getContext(), "PDF saved to Download folder", Toast.LENGTH_LONG).show();
 
-                // ✅ 导出成功后回到 ManageChildrenActivity
                 goBackToManageChildren();
 
             } else {
@@ -425,7 +427,6 @@ public class SymptomHistoryParentFragment extends Fragment {
                 Toast.makeText(getContext(),
                         "PDF Saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
 
-                // ✅ 导出成功后回到 ManageChildrenActivity
                 goBackToManageChildren();
             }
         } catch (Exception e) {
@@ -456,7 +457,6 @@ public class SymptomHistoryParentFragment extends Fragment {
             if (e.triggers == null || e.triggers.isEmpty()) {
                 triggers = "";
             } else {
-                // 用 ; 连接，避免逗号干扰 CSV 列
                 triggers = TextUtils.join(";", e.triggers);
             }
 
@@ -483,6 +483,7 @@ public class SymptomHistoryParentFragment extends Fragment {
                 os.close();
 
                 Toast.makeText(getContext(), "CSV saved to Download folder", Toast.LENGTH_LONG).show();
+                goBackToManageChildren();
             } else {
                 File dir = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
                 if (dir != null && !dir.exists()) dir.mkdirs();
@@ -497,6 +498,8 @@ public class SymptomHistoryParentFragment extends Fragment {
                         "CSV saved to: " + file.getAbsolutePath(),
                         Toast.LENGTH_LONG
                 ).show();
+
+                goBackToManageChildren();
             }
 
         } catch (Exception e) {

@@ -98,15 +98,20 @@ public class ParentHomeActivity extends AppCompatActivity {
         setupZoneCardListener();
         setupLinkProviderButton();
 
-        String nameFromIntent = getIntent().getStringExtra("childName");
-        if (nameFromIntent != null && !nameFromIntent.isEmpty()) {
-            currentChildName = nameFromIntent;
-        }
-
         currentChildKey = getIntent().getStringExtra("childKey");
         if (currentChildKey == null || currentChildKey.isEmpty()) {
             Log.e("ParentHomeActivity", "Error: Missing 'childKey' Intent extra.");
+            Toast.makeText(this, "No child selected.", Toast.LENGTH_SHORT).show();
         }
+
+        String nameFromIntent = getIntent().getStringExtra("childName");
+        if (nameFromIntent != null && !nameFromIntent.isEmpty()) {
+            currentChildName = nameFromIntent;
+        } else {
+            loadChildNameFromFirebase();
+        }
+
+        txtCurrentChildName.setText("Child: " + currentChildName);
 
         loadDataForChild(currentChildName);
 
@@ -141,6 +146,29 @@ public class ParentHomeActivity extends AppCompatActivity {
         listenForAlerts();
         listenForLinkedProvider();
     }
+    private void loadChildNameFromFirebase() {
+        if (currentChildKey == null || currentChildKey.isEmpty()) {
+            return;
+        }
+
+        DatabaseReference childRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(currentChildKey);
+
+        childRef.child("displayName")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    String name = snapshot.getValue(String.class);
+                    if (name != null && !name.isEmpty()) {
+                        currentChildName = name;
+                        txtCurrentChildName.setText("Child: " + currentChildName);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("ParentHomeActivity", "Failed to load child displayName: " + e.getMessage());
+                });
+    }
+
 
     private void initViews() {
         rootLayout = findViewById(R.id.parentHomeRoot);
