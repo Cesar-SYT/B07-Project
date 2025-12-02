@@ -1,0 +1,106 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/titleStreaks"
+            android:text="Streaks"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Controller streak -->
+        <LinearLayout
+            android:id="@+id/streakControllerContainer"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:background="#E8F4FF"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/streakControllerLabel"
+                android:text="Controller Streak:"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/streakControllerValue"
+                android:text="0 days"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginStart="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <!-- Technique streak -->
+        <LinearLayout
+            android:id="@+id/streakTechniqueContainer"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:background="#E8F4FF"
+            android:layout_marginBottom="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/streakTechniqueLabel"
+                android:text="Technique Session:"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/streakTechniqueValue"
+                android:text="0 days"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginStart="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <!-- Badges title -->
+        <TextView
+            android:id="@+id/titleBadges"
+            android:text="Badges"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- no badges -->
+        <TextView
+            android:id="@+id/noBadgesMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No badges yet – keep going!"
+            android:textSize="16sp"
+            android:paddingTop="4dp"
+            android:paddingBottom="12dp"
+            android:visibility="gone" />
+
+        <!-- Badges list -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/badgesRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
+
+    </LinearLayout>
+
+</ScrollView>

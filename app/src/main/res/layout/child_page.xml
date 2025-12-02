@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChildHomeActivity">
+
+    <!-- MAIN CONTENT (Safety & Control Interface) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF">
+
+        <!-- Group for Home Content to easily toggle visibility -->
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_home_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="btn_pef_history,txt_pef_log_label,btn_one_tap_triage,card_pef_entry,btnMenu" />
+
+        <!-- PEF History Button (Top Right) -->
+        <ImageButton
+            android:id="@+id/btn_pef_history"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="PEF Log History"
+            android:src="@android:drawable/ic_menu_sort_by_size"
+            app:tint="#333333"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/txt_pef_log_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PEF Log"
+            android:textSize="12sp"
+            android:textColor="#333333"
+            app:layout_constraintTop_toBottomOf="@id/btn_pef_history"
+            app:layout_constraintStart_toStartOf="@id/btn_pef_history"
+            app:layout_constraintEnd_toEndOf="@id/btn_pef_history"/>
+
+        <!-- One-Tap Triage Button (Center) -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_one_tap_triage"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:text="One-Tap\nTriage"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_circle_button"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:elevation="8dp"
+            android:stateListAnimator="@null"
+            app:layout_constraintBottom_toTopOf="@+id/card_pef_entry"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <!-- PEF Recording Area -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_pef_entry"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="32dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/btn_one_tap_triage"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Record PEF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#333333"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_pef_mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Compare Pre/Post Meds"
+                    android:layout_marginTop="12dp"
+                    android:checked="false"/>
+
+                <!-- Pre-Med / Single Value Input -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="16dp">
+
+                    <EditText
+                        android:id="@+id/et_pef_value"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Enter Value"
+                        android:inputType="number"
+                        android:textAlignment="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="L/min"
+                        android:layout_marginStart="8dp"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <!-- Post-Med Input (Initially Hidden) -->
+                <LinearLayout
+                    android:id="@+id/layout_post_pef"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/et_post_pef_value"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Post-Med Value"
+                        android:inputType="number"
+                        android:textAlignment="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="L/min"
+                        android:layout_marginStart="8dp"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_save_pef"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Save Log"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Fragment container (NavGraph removed to prevent auto-load) -->
+        <fragment
+            android:id="@+id/nav_host_fragment_child_home"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            android:visibility="gone"
+            android:elevation="10dp"
+            android:background="#FFFFFF"/>
+
+        <!-- Menu Button (Moved to bottom to be on Top Z-index) -->
+        <ImageButton
+            android:id="@+id/btnMenu"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Menu"
+            android:src="@drawable/ic_menu"
+            app:tint="#333333"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:elevation="12dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- SIDE MENU (Drawer) -->
+    <LinearLayout
+        android:id="@+id/sideMenu"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:elevation="16dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:id="@+id/txtChildGreetingMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Menu"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="32dp"
+            android:textColor="#333333"/>
+
+        <!-- Menu Items -->
+        <TextView
+            android:id="@+id/btnDailyCheckChild"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Medicine Record"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:paddingVertical="16dp"
+            android:drawablePadding="16dp"
+            app:drawableStartCompat="@drawable/ic_check"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"/>
+
+        <TextView
+            android:id="@+id/btnLogMedicineChild"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Log Medicine"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:paddingVertical="16dp"
+            android:drawablePadding="16dp"
+            app:drawableStartCompat="@drawable/ic_add"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"/>
+
+        <TextView
+            android:id="@+id/btnTechniquePracticeChild"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Technique Practice"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:paddingVertical="16dp"
+            android:drawablePadding="16dp"
+            app:drawableStartCompat="@android:drawable/ic_media_play"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"/>
+
+        <TextView
+            android:id="@+id/btnBadgesandStreakChild"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Badges &amp; Streak"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:paddingVertical="16dp"
+            android:drawablePadding="16dp"
+            app:drawableStartCompat="@drawable/ic_badge"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"/>
+
+        <TextView
+            android:id="@+id/btnSymptomCheckin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Symptom Checkin"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:paddingVertical="16dp"
+            android:drawablePadding="16dp"
+            app:drawableStartCompat="@android:drawable/ic_menu_edit"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/btnChildSignOut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sign Out"
+            android:textSize="18sp"
+            android:textColor="#D32F2F"
+            android:paddingVertical="16dp"
+            android:drawablePadding="16dp"
+            app:drawableStartCompat="@android:drawable/ic_lock_power_off"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"/>
+
+    </LinearLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>
