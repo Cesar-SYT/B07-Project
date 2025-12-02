@@ -204,10 +204,9 @@ public class PEFDataRepository {
         void onSuccess();
         void onFailure(String error);
     }
-    public interface OnPBFetchListener {
-        void onSuccess(float pbValue);
-        void onFailure(String errorMsg);
-    }
+    
+    // Removed OnPBFetchListener to use the top-level one
+    
     public interface OnLogsFetchListener {
         void onLogsFetched(List<PEFLogModel> logs);
         void onFailure(String error);
