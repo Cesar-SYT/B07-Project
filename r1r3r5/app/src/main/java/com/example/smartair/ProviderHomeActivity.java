@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartair.model.Child;
+import com.example.smartair.model.UserRole;
 import com.example.smartair.r3.SimpleMedicineLog;
 import com.example.smartair.r5model.SymptomEntry;
 import com.google.firebase.auth.FirebaseAuth;
@@ -130,7 +131,8 @@ public class ProviderHomeActivity extends AppCompatActivity {
                     Child child = childSnapshot.getValue(Child.class);
                     
                     // Check if role is CHILD and if providerId matches current provider
-                    if (child != null && "CHILD".equals(child.getRole())) {
+                    // FIX: Use Enum comparison instead of String equals
+                    if (child != null && child.getRole() == UserRole.CHILD) {
                         if (currentProviderId != null && currentProviderId.equals(child.getProviderId())) {
                              patientList.add(child);
                              patientNames.add(child.getDisplayName());
