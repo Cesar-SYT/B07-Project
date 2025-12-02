@@ -56,6 +56,9 @@ public class TriageDetail extends AppCompatActivity {
     private DatabaseReference rootRef;
     private String childKey;
     private String childName = "Child"; // Default placeholder
+    
+    // Zone Logic
+    private float personalBest = 0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +66,7 @@ public class TriageDetail extends AppCompatActivity {
         setContentView(R.layout.activity_triage_detail);
 
         rootRef = FirebaseDatabase.getInstance().getReference("users");
-        fetchChildInfoAndSendAlert(); // Start the alert process
+        fetchChildInfoAndSendAlert(); // Start the alert process and fetch PB
 
         initializeViews();
         setupAdapters();
@@ -92,16 +95,23 @@ public class TriageDetail extends AppCompatActivity {
 
                     if (parentId != null && !parentId.isEmpty()) {
                         sendAlertToParent(parentId, "TRIAGE_STARTED");
-                    } else {
-                        // If no parent linked, maybe log it or just ignore for now
-                        // System.out.println("No parent linked for alert.");
                     }
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle error
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+        
+        // Fetch Personal Best for Zone Logic
+        PEFDataRepository.getInstance().fetchParentConfiguredPB(childKey, new OnPBFetchListener() {
+            @Override
+            public void onSuccess(float pbValue) {
+                personalBest = pbValue;
+            }
+            @Override
+            public void onFailure(String errorMsg) {
+                // Ignore error, will default to generic advice if PB missing
             }
         });
     }
@@ -194,26 +204,85 @@ public class TriageDetail extends AppCompatActivity {
 
         // Call Emergency Actions
         View.OnClickListener callEmergencyListener = v -> {
-            // Placeholder for actual call logic
             Toast.makeText(TriageDetail.this, "Calling Emergency Services...", Toast.LENGTH_LONG).show();
-            // Example integration:
-            // Intent intent = new Intent(Intent.ACTION_DIAL);
-            // intent.setData(android.net.Uri.parse("tel:112"));
-            // startActivity(intent);
         };
         if (btnEmergencyTop != null) btnEmergencyTop.setOnClickListener(callEmergencyListener);
         if (btnCallEmergencyBottom != null) btnCallEmergencyBottom.setOnClickListener(callEmergencyListener);
 
         // Home Steps Action (Green Button)
         if (btnHomeSteps != null) {
-            btnHomeSteps.setOnClickListener(v -> {
-                // Navigate back to ChildHomeActivity (Safety & Control dashboard)
-                Intent intent = new Intent(TriageDetail.this, ChildHomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                finish();
-            });
+            btnHomeSteps.setOnClickListener(v -> showHomeStepsDialog());
         }
+    }
+
+    private void showHomeStepsDialog() {
+        String title;
+        String steps;
+        int icon;
+        
+        // Determine Zone
+        float currentPEF = 0;
+        String input = etCurrentPEF.getText().toString().trim();
+        if (!input.isEmpty()) {
+            try {
+                currentPEF = Float.parseFloat(input);
+            } catch (NumberFormatException e) {
+                currentPEF = 0;
+            }
+        }
+
+        if (personalBest > 0 && currentPEF > 0) {
+            float percentage = (currentPEF / personalBest) * 100;
+            
+            if (percentage >= 80) {
+                // Green Zone
+                title = "Green Zone (Doing Well)";
+                steps = "Even though your PEF is good, since you are here, you might have mild symptoms:\n\n" +
+                        "1. Take your controller medicine as prescribed.\n" +
+                        "2. If you have cough/wheeze, use Rescue Inhaler (2 puffs).\n" +
+                        "3. Monitor symptoms closely for 24 hours.";
+                icon = android.R.drawable.ic_dialog_info;
+            } else if (percentage >= 50) {
+                // Yellow Zone
+                title = "Yellow Zone (Caution)";
+                steps = "Your asthma is getting worse:\n\n" +
+                        "1. Take 2-4 puffs of Rescue Inhaler every 20 minutes for up to 1 hour.\n" +
+                        "2. If symptoms improve, continue monitoring.\n" +
+                        "3. If symptoms persist, call your doctor.";
+                icon = android.R.drawable.ic_dialog_alert;
+            } else {
+                // Red Zone
+                title = "Red Zone (Medical Alert)";
+                steps = "Your asthma is severe:\n\n" +
+                        "1. Use Rescue Inhaler immediately (4-6 puffs).\n" +
+                        "2. Call Emergency immediately if not better in 15 mins.\n" +
+                        "3. Stay calm and sit up.";
+                icon = android.R.drawable.ic_delete;
+            }
+        } else {
+            // Default / Unknown Zone (assume Yellow/Caution as fallback for Triage)
+            title = "Home Action Plan (Caution)";
+            steps = "Standard steps for worsening symptoms:\n\n" +
+                    "1. Sit upright and stay calm.\n" +
+                    "2. Take 2-4 puffs of Rescue Inhaler every 20 minutes for up to 1 hour.\n" +
+                    "3. If symptoms improve, continue to monitor closely.\n" +
+                    "4. If symptoms worsen or do not improve, call emergency immediately.";
+            icon = android.R.drawable.ic_dialog_alert;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(steps)
+                .setIcon(icon)
+                .setPositiveButton("Done / Return Home", (dialog, which) -> {
+                    // Navigate back to ChildHomeActivity (Safety & Control dashboard)
+                    Intent intent = new Intent(TriageDetail.this, ChildHomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void updateEmergencyVisibility() {

@@ -206,7 +206,7 @@
                     android:id="@+id/btnHomeSteps"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Start Home Steps\n(For controllable symptoms)"
+                    android:text="Start Home Steps for controllable symptoms (shows zone-aligned steps from the action plan)"
                     android:backgroundTint="#388E3C"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"

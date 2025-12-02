@@ -71,7 +71,7 @@
 
 * [cite_start]**PEF & Zones:** Manual PEF entry is required[cite: 102]. [cite_start]PB is settable by Parent[cite: 104]. [cite_start]App computes today's zone and shows it on Child and Parent homes[cite: 105].
 * [cite_start]**One-tap Triage:** A quick check for red flags (e.g., can't speak full sentences, blue lips)[cite: 108, 110, 112].
-    * [cite_start]**Decision Card:** Shows "Call Emergency Now" for critical flags or "Start Home Steps" (zone-aligned action plan) for controllable symptoms[cite: 114, 115].
+    * [cite_start]**Decision Card:** Shows "Call Emergency Now" for critical flags or "Start Home Steps for controllable symptoms (shows zone-aligned steps from the action plan)"[cite: 114, 115].
     * [cite_start]**Timer:** Default 10-minute timer with auto-escalation if not improving[cite: 116].
     * [cite_start]**Parent Alert:** Fired when a triage session starts and on escalation[cite: 117].
 * [cite_start]**Safety Note:** "This is guidance, not a diagnosis. If in doubt, call emergency" is always visible in triage[cite: 120].
