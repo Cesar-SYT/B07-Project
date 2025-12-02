@@ -35,7 +35,12 @@ public class PEFLogAdapter extends RecyclerView.Adapter<PEFLogAdapter.PEFLogView
         PEFLogModel log = pefLogList.get(position);
 
         holder.tvDate.setText(log.getDateTime());
-        holder.tvPefValue.setText(String.format("%s L/min", (int) log.getPefValue()));
+        
+        if (log.isComparison()) {
+            holder.tvPefValue.setText(String.format("Pre: %d / Post: %d L/min", log.getPreValue(), log.getPostValue()));
+        } else {
+            holder.tvPefValue.setText(String.format("%d L/min", log.getPreValue()));
+        }
         
         // Zone Logic
         String zone = log.getZone();

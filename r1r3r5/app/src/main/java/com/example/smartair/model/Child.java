@@ -2,6 +2,8 @@ package com.example.smartair.model;
 
 public class Child extends User{
     private String notes;
+    private String parentId;
+
     public Child() {
         super();
     }
@@ -17,4 +19,11 @@ public class Child extends User{
         this.notes = notes;
     }
 
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
 }

@@ -145,7 +145,8 @@ public class ChildHomeActivity extends AppCompatActivity {
 
     private void fetchBaselinePEF() {
         String childKey = getCurrentChildKey();
-        PEFDataRepository.getInstance().fetchParentConfiguredPB(childKey, new PEFDataRepository.OnPBFetchListener() {
+        // Fetch PB
+        PEFDataRepository.getInstance().fetchParentConfiguredPB(childKey, new OnPBFetchListener() {
             @Override
             public void onSuccess(float pbValue) {
                 currentPB = pbValue;

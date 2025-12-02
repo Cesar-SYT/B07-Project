@@ -70,7 +70,7 @@ public class DisplayPEF extends AppCompatActivity {
 
     private void fetchData() {
         // 1. Fetch Parent Configured PB
-        PEFDataRepository.getInstance().fetchParentConfiguredPB(currentChildKey, new PEFDataRepository.OnPBFetchListener() {
+        PEFDataRepository.getInstance().fetchParentConfiguredPB(currentChildKey, new OnPBFetchListener() {
             @Override
             public void onSuccess(float pbValue) {
                 parentConfiguredPB = pbValue;
