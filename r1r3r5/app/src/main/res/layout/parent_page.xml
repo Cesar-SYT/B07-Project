@@ -235,12 +235,12 @@
                     </RadioGroup>
                 </LinearLayout>
 
-                <View
+                <com.example.smartair.views.SimpleLineChart
                     android:id="@+id/viewTrendPlaceholder"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_marginTop="8dp"
-                    android:background="#CFD8DC"/>
+                    android:background="#FAFAFA"/>
             </LinearLayout>
 
             <TextView

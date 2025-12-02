@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartair.R;
+import com.example.smartair.r3.SimpleMedicineLog;
+import com.example.smartair.views.SimpleLineChart;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,8 +33,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ParentHomeActivity extends AppCompatActivity {
 
@@ -56,6 +62,7 @@ public class ParentHomeActivity extends AppCompatActivity {
     private Button btnSymptomCheckin;
     private Button btnLinkProvider;
     private TextView txtLinkedProvider;
+    private SimpleLineChart viewTrendPlaceholder;
     private String currentChildName = "Child";
     private String currentChildKey;
 
@@ -91,6 +98,8 @@ public class ParentHomeActivity extends AppCompatActivity {
         // Listen for changes in linked provider
         if (currentChildKey != null) {
              listenForLinkedProvider();
+             // Default load 7 days chart
+             loadRescueLogsForChart(7);
         }
     }
 
@@ -113,6 +122,7 @@ public class ParentHomeActivity extends AppCompatActivity {
         btnSymptomCheckin = findViewById(R.id.btnSymptomCheckin);
         btnLinkProvider = findViewById(R.id.btnLinkProvider);
         txtLinkedProvider = findViewById(R.id.txtLinkedProvider);
+        viewTrendPlaceholder = findViewById(R.id.viewTrendPlaceholder);
     }
     
     private void listenForLinkedProvider() {
@@ -194,7 +204,43 @@ public class ParentHomeActivity extends AppCompatActivity {
     }
 
     private void onTrendRangeChanged(int days) {
-        // Placeholder
+        loadRescueLogsForChart(days);
+    }
+
+    private void loadRescueLogsForChart(int days) {
+        if (currentChildKey == null) return;
+
+        long cutoffTime = System.currentTimeMillis() - (days * 24L * 3600 * 1000);
+        DatabaseReference logsRef = FirebaseDatabase.getInstance().getReference("users")
+                .child(currentChildKey).child("medicine_logs");
+
+        logsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<SimpleLineChart.DataPoint> points = new ArrayList<>();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    SimpleMedicineLog log = child.getValue(SimpleMedicineLog.class);
+                    if (log != null && "RESCUE".equalsIgnoreCase(log.getType())) {
+                        try {
+                            Date d = sdf.parse(log.getTime());
+                            if (d != null && d.getTime() >= cutoffTime) {
+                                points.add(new SimpleLineChart.DataPoint(d.getTime(), log.getDoseCount()));
+                            }
+                        } catch (Exception e) {}
+                    }
+                }
+                
+                Collections.sort(points);
+                viewTrendPlaceholder.setData(points);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Ignore
+            }
+        });
     }
 
     private void setupNotificationsRecycler() {
@@ -272,6 +318,8 @@ public class ParentHomeActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(ParentHomeActivity.this, "Baseline PEF updated!", Toast.LENGTH_SHORT).show();
+                // Update the UI after successful save
+                updateZoneCardWithPB(pbVal);
             }
             @Override
             public void onFailure(String error) {
@@ -283,16 +331,41 @@ public class ParentHomeActivity extends AppCompatActivity {
     private void loadDataForChild(@NonNull String childName) {
         currentChildName = childName;
         txtCurrentChildName.setText("Child: " + childName);
-        updateZoneCard("Green");
         txtRescueLastUsed.setText("Last: N/A");
         txtRescueThisWeek.setText("This week: 0 puffs");
         txtControllerToday.setText("Today: 0/0 doses");
         txtControllerWeek.setText("This week: 0/7 days");
         loadDummyNotifications();
+        
+        // Fetch the stored PB
+        fetchPBFromFirebase();
+    }
+    
+    private void fetchPBFromFirebase() {
+        if (currentChildKey == null) return;
+        
+        PEFDataRepository.getInstance().fetchParentConfiguredPB(currentChildKey, new OnPBFetchListener() {
+            @Override
+            public void onSuccess(float pbValue) {
+                updateZoneCardWithPB(pbValue);
+            }
+
+            @Override
+            public void onFailure(String errorMsg) {
+                updateZoneCard("Unknown");
+            }
+        });
     }
 
-    private void updateZoneCard(@NonNull String zoneName) {
-        txtZoneParent.setText("Today: " + zoneName + " Zone\n(Click to set PB)");
+    private void updateZoneCard(String zoneName) {
+        // FIX: Add specific instruction text
+        txtZoneParent.setText("Today: " + zoneName + " Zone\n(Click here to set PB)");
+    }
+    
+    private void updateZoneCardWithPB(float pbValue) {
+        String pbText = (pbValue > 0) ? String.valueOf((int) pbValue) : "Not Set";
+        // FIX: Add specific instruction text
+        txtZoneParent.setText("Today: Green Zone\n(PB: " + pbText + " L/min)\n(Click here to update)");
     }
 
     private void loadDummyNotifications() {
@@ -370,10 +443,28 @@ public class ParentHomeActivity extends AppCompatActivity {
             if (item instanceof Alert) {
                 Alert alert = (Alert) item;
                 String title = "🚨 ALERT: " + alert.getChildName();
-                String message = "Triage session started at " + new java.text.SimpleDateFormat("HH:mm").format(new java.util.Date(alert.getTimestamp()));
+                // FIX: Dynamic message based on type
+                String message = "Unknown Alert";
+                if ("TRIAGE_STARTED".equals(alert.getType())) {
+                    message = "Triage session started at " + new java.text.SimpleDateFormat("HH:mm").format(new java.util.Date(alert.getTimestamp()));
+                } else if ("TRIAGE_ESCALATED".equals(alert.getType())) {
+                    message = "Triage Escalated! Please check on child.";
+                } else if ("INVENTORY_LOW".equals(alert.getType())) {
+                    message = "Low Medicine Inventory! Please refill.";
+                } else if ("INVENTORY_EXPIRED".equals(alert.getType())) {
+                    message = "Medicine Expired! Please replace.";
+                }
+                
                 holder.txtTitle.setText(title);
                 holder.txtMessage.setText(message);
-                holder.itemView.setBackgroundColor(Color.parseColor("#FFCDD2")); // Light red for alerts
+                
+                // Color coding
+                if ("INVENTORY_LOW".equals(alert.getType())) {
+                    holder.itemView.setBackgroundColor(Color.parseColor("#FFF9C4")); // Yellow
+                } else {
+                    holder.itemView.setBackgroundColor(Color.parseColor("#FFCDD2")); // Red
+                }
+                
             } else if (item instanceof NotificationItem) {
                 NotificationItem notification = (NotificationItem) item;
                 holder.txtTitle.setText(notification.title);

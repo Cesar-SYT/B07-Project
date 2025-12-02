@@ -27,6 +27,7 @@ import com.example.smartair.model.Child;
 import com.example.smartair.model.UserRole;
 import com.example.smartair.r3.SimpleMedicineLog;
 import com.example.smartair.r5model.SymptomEntry;
+import com.example.smartair.views.SimpleLineChart;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -61,6 +62,7 @@ public class ProviderHomeActivity extends AppCompatActivity {
     private TextView txtSymptomsSummaryProvider;
     private TextView txtTopTriggersProvider;
     private TextView txtEventSample1;
+    private SimpleLineChart viewRescueChart;
 
     private Button btnExportReportProvider;
     private Button btnSignout;
@@ -113,6 +115,7 @@ public class ProviderHomeActivity extends AppCompatActivity {
         txtSymptomsSummaryProvider = findViewById(R.id.txtSymptomsSummaryProvider);
         txtTopTriggersProvider = findViewById(R.id.txtTopTriggersProvider);
         txtEventSample1 = findViewById(R.id.txtEventSample1);
+        viewRescueChart = findViewById(R.id.viewRescueChart);
 
         btnExportReportProvider = findViewById(R.id.btnExportReportProvider);
         btnSignout = findViewById(R.id.btnProviderSignOut);
@@ -239,7 +242,11 @@ public class ProviderHomeActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int rescueCount = 0;
                 long oneWeekAgo = System.currentTimeMillis() - (7L * 24 * 3600 * 1000);
+                // Show 30 days chart for provider
+                long thirtyDaysAgo = System.currentTimeMillis() - (30L * 24 * 3600 * 1000);
+                
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                List<SimpleLineChart.DataPoint> chartPoints = new ArrayList<>();
 
                 exportMedicineLogs.clear(); // Ensure fresh list
 
@@ -249,8 +256,13 @@ public class ProviderHomeActivity extends AppCompatActivity {
                         exportMedicineLogs.add(log); // Add to export list
                         try {
                             Date date = sdf.parse(log.getTime());
-                            if (date != null && date.getTime() > oneWeekAgo) {
-                                rescueCount += log.getDoseCount();
+                            if (date != null) {
+                                if (date.getTime() > oneWeekAgo) {
+                                    rescueCount += log.getDoseCount();
+                                }
+                                if (date.getTime() > thirtyDaysAgo) {
+                                    chartPoints.add(new SimpleLineChart.DataPoint(date.getTime(), log.getDoseCount()));
+                                }
                             }
                         } catch (Exception e) {}
                     }
@@ -258,7 +270,12 @@ public class ProviderHomeActivity extends AppCompatActivity {
                 // Sort logs for report (Newest first)
                 Collections.sort(exportMedicineLogs, (o1, o2) -> o2.getTime().compareTo(o1.getTime()));
                 
+                // Update text
                 txtEventSample1.setText("Rescue use: " + rescueCount + " puffs this week.");
+                
+                // Update Chart
+                Collections.sort(chartPoints);
+                viewRescueChart.setData(chartPoints);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
