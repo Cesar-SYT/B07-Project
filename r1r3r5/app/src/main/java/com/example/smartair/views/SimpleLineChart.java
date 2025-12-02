@@ -119,8 +119,8 @@ public class SimpleLineChart extends View {
     }
 
     public static class DataPoint implements Comparable<DataPoint> {
-        long timestamp;
-        float value;
+        public long timestamp;
+        public float value;
 
         public DataPoint(long timestamp, float value) {
             this.timestamp = timestamp;

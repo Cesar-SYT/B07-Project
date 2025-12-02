@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.constraintlayout.widget.Group;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -55,6 +56,7 @@ public class ChildHomeActivity extends AppCompatActivity {
     // Main Content - Safety & Control Elements
     private View btnOneTapTriage;
     private ImageButton btnPefHistory;
+    private Group groupHomeContent;
     
     // PEF Logging Components
     private SwitchCompat switchPefMode;
@@ -104,6 +106,7 @@ public class ChildHomeActivity extends AppCompatActivity {
         // Main Content - Safety & Control
         btnOneTapTriage = findViewById(R.id.btn_one_tap_triage);
         btnPefHistory = findViewById(R.id.btn_pef_history);
+        groupHomeContent = findViewById(R.id.group_home_content);
         
         // PEF Log
         switchPefMode = findViewById(R.id.switch_pef_mode);
@@ -196,6 +199,14 @@ public class ChildHomeActivity extends AppCompatActivity {
             View container = findViewById(R.id.nav_host_fragment_child_home);
             if (container != null) {
                 container.setVisibility(View.VISIBLE);
+                if (groupHomeContent != null) {
+                    groupHomeContent.setVisibility(View.GONE);
+                }
+                // Explicitly hide btnMenu if Group fails or due to elevation issues
+                if (btnMenu != null) {
+                    btnMenu.setVisibility(View.GONE);
+                }
+                
                 drawerLayout.closeDrawer(GravityCompat.START);
                 
                 try {
@@ -361,6 +372,12 @@ public class ChildHomeActivity extends AppCompatActivity {
             View container = findViewById(R.id.nav_host_fragment_child_home);
             if (container != null && container.getVisibility() == View.VISIBLE) {
                 container.setVisibility(View.GONE);
+                if (groupHomeContent != null) {
+                    groupHomeContent.setVisibility(View.VISIBLE);
+                }
+                if (btnMenu != null) {
+                    btnMenu.setVisibility(View.VISIBLE);
+                }
                 return; // Don't finish activity
             }
             super.onBackPressed();

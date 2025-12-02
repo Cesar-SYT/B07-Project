@@ -27,7 +27,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class TriageDetail extends AppCompatActivity {
 
@@ -85,6 +87,9 @@ public class TriageDetail extends AppCompatActivity {
 
                     String parentId = snapshot.child("parentId").getValue(String.class);
                     
+                    // Log the Triage Incident persistenty
+                    saveTriageLog(childKey, "TRIAGE_STARTED");
+
                     if (parentId != null && !parentId.isEmpty()) {
                         sendAlertToParent(parentId, "TRIAGE_STARTED");
                     } else {
@@ -99,6 +104,19 @@ public class TriageDetail extends AppCompatActivity {
                 // Handle error
             }
         });
+    }
+
+    private void saveTriageLog(String childKey, String action) {
+        DatabaseReference logsRef = rootRef.child(childKey).child("triage_logs");
+        String logId = logsRef.push().getKey();
+        if (logId != null) {
+            Map<String, Object> log = new HashMap<>();
+            log.put("logId", logId);
+            log.put("action", action);
+            log.put("timestamp", System.currentTimeMillis());
+            
+            logsRef.child(logId).setValue(log);
+        }
     }
 
     private void sendAlertToParent(String parentId, String type) {
@@ -276,6 +294,8 @@ public class TriageDetail extends AppCompatActivity {
         // We'll assume the initial fetch handled the START alert. 
         // For ESCALATION, let's do a quick fetch-send again.
         sendEscalationAlert();
+        // Log Escalation
+        if (childKey != null) saveTriageLog(childKey, "TRIAGE_ESCALATED");
     }
 
     private void sendEscalationAlert() {

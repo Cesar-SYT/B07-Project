@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartair.Alert;
 import com.example.smartair.R;
 import com.example.smartair.model.Child;
 import com.google.firebase.database.DataSnapshot;
@@ -53,6 +54,7 @@ public class InventoryActivity extends AppCompatActivity {
 
     private String childKey;
     private Child currentChild;    // 封装成 Child 对象给 InventoryItem 用
+    private String parentId;       // To send alerts
 
     private DatabaseReference usersRef;
     private DatabaseReference inventoryRef;
@@ -92,6 +94,16 @@ public class InventoryActivity extends AppCompatActivity {
         inventoryRef = usersRef
                 .child(childKey)
                 .child("inventory");
+        
+        // Fetch Parent ID for alerting
+        usersRef.child(childKey).child("parentId").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                parentId = snapshot.getValue(String.class);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
 
         // 2. 绑定控件
         txtChildName = findViewById(R.id.txtChildName);
@@ -119,6 +131,9 @@ public class InventoryActivity extends AppCompatActivity {
                             .child(item.getId())
                             .child("remainingPercent")
                             .setValue(item.getRemainingPercent());
+                    
+                    // Check for Low Inventory Alert
+                    checkAndSendLowAlert(item, newVal);
 
                     // 更新 UI
                     refreshWarnings();
@@ -133,6 +148,33 @@ public class InventoryActivity extends AppCompatActivity {
 
         // 5. 添加药品
         btnAddMedicine.setOnClickListener(v -> showAddMedicineDialog());
+    }
+    
+    private void checkAndSendLowAlert(InventoryItem item, int newVal) {
+        if (parentId == null) return;
+        
+        int total = item.getTotalDoses();
+        if (total > 0) {
+            double percent = (double) newVal / total * 100.0;
+            // If it drops below threshold (and maybe check if it wasn't already low to avoid spam, 
+            // but for now direct alert is safer)
+            if (percent <= LOW_THRESHOLD_PERCENT) {
+                // Send alert
+                DatabaseReference alertsRef = FirebaseDatabase.getInstance().getReference("alerts").child(parentId);
+                String alertId = alertsRef.push().getKey();
+                if (alertId != null) {
+                    Alert alert = new Alert(
+                        alertId,
+                        childKey,
+                        childName,
+                        "INVENTORY_LOW",
+                        System.currentTimeMillis(),
+                        "new"
+                    );
+                    alertsRef.child(alertId).setValue(alert);
+                }
+            }
+        }
     }
 
     // === 从服务器读取该孩子的库存 ===
