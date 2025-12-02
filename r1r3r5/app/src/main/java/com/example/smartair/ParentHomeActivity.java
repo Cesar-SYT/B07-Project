@@ -54,6 +54,7 @@ public class ParentHomeActivity extends AppCompatActivity {
     private Button btnViewReportParent;
     private Button btnSharingSettingsParent;
     private Button btnSymptomCheckin;
+    private Button btnLinkProvider; // To-Do 3: New Button
     private String currentChildName = "Child";
     private String currentChildKey;
 
@@ -70,6 +71,7 @@ public class ParentHomeActivity extends AppCompatActivity {
         setupNotificationsRecycler();
         setupQuickActions();
         setupZoneCardListener();
+        setupLinkProviderButton(); // To-Do 3: Setup listener
 
         String nameFromIntent = getIntent().getStringExtra("childName");
         if (nameFromIntent != null && !nameFromIntent.isEmpty()) {
@@ -103,6 +105,45 @@ public class ParentHomeActivity extends AppCompatActivity {
         btnViewReportParent = findViewById(R.id.btnViewReportParent);
         btnSharingSettingsParent = findViewById(R.id.btnSharingSettingsParent);
         btnSymptomCheckin = findViewById(R.id.btnSymptomCheckin);
+        btnLinkProvider = findViewById(R.id.btnLinkProvider); // To-Do 3: Initialize
+    }
+
+    // To-Do 3: Implement Link Provider Logic
+    private void setupLinkProviderButton() {
+        btnLinkProvider.setOnClickListener(v -> showLinkProviderDialog());
+    }
+
+    private void showLinkProviderDialog() {
+        if (currentChildKey == null) {
+            Toast.makeText(this, "Please select a child first.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Link to Doctor");
+        builder.setMessage("Enter the Doctor's unique ID provided to you:");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("Link", (dialog, which) -> {
+            String providerId = input.getText().toString().trim();
+            if (!providerId.isEmpty()) {
+                linkChildToProvider(providerId);
+            }
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    private void linkChildToProvider(String providerId) {
+        // Save the providerId to the child's node in Firebase
+        DatabaseReference childRef = FirebaseDatabase.getInstance().getReference("users").child(currentChildKey);
+        childRef.child("providerId").setValue(providerId)
+                .addOnSuccessListener(aVoid -> Toast.makeText(ParentHomeActivity.this, "Linked to Doctor successfully!", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(ParentHomeActivity.this, "Failed to link: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void setupTopBar() {

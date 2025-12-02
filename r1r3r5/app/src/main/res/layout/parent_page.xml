@@ -81,6 +81,16 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- To-Do 2: Add Link Provider Button -->
+            <Button
+                android:id="@+id/btnLinkProvider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="#4CAF50"
+                android:text="Link to Doctor (Enter ID)"
+                android:textColor="@android:color/white"/>
+
             <LinearLayout
                 android:id="@+id/cardZoneParent"
                 android:layout_width="match_parent"

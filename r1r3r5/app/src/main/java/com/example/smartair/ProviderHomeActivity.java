@@ -17,6 +17,7 @@ import com.example.smartair.model.Child;
 import com.example.smartair.r3.SimpleMedicineLog;
 import com.example.smartair.r5model.SymptomEntry;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +35,7 @@ import java.util.Set;
 public class ProviderHomeActivity extends AppCompatActivity {
 
     private Spinner spinnerPatientSelector;
+    private TextView txtProviderId; // To-Do 4: Provider ID TextView
 
     private View cardRescueOverviewProvider;
     private View cardControllerOverviewProvider;
@@ -52,12 +54,23 @@ public class ProviderHomeActivity extends AppCompatActivity {
     private ArrayAdapter<String> spinnerAdapter;
     private final List<String> patientNames = new ArrayList<>();
 
+    private String currentProviderId;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.provider_page);
 
         usersRef = FirebaseDatabase.getInstance().getReference("users");
+        
+        // To-Do 5: Get Current Provider ID (email as key logic)
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null && user.getEmail() != null) {
+            currentProviderId = user.getEmail().replace(".", ","); // Simplified ID derived from email
+        } else {
+            // Fallback or redirect to login
+            currentProviderId = "unknown_provider";
+        }
 
         initViews();
         setupPatientSpinner();
@@ -67,6 +80,11 @@ public class ProviderHomeActivity extends AppCompatActivity {
 
     private void initViews() {
         spinnerPatientSelector = findViewById(R.id.spinnerPatientSelector);
+        txtProviderId = findViewById(R.id.txtProviderId); // To-Do 4: Bind View
+
+        if (txtProviderId != null) {
+            txtProviderId.setText("My Provider ID: " + currentProviderId);
+        }
 
         cardRescueOverviewProvider = findViewById(R.id.cardRescueOverviewProvider);
         cardControllerOverviewProvider = findViewById(R.id.cardControllerOverviewProvider);
@@ -96,53 +114,40 @@ public class ProviderHomeActivity extends AppCompatActivity {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerPatientSelector.setAdapter(spinnerAdapter);
 
-        spinnerPatientSelector.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                if (position >= 0 && position < patientList.size()) {
-                    Child selectedChild = patientList.get(position);
-                    String childKey = selectedChild.getEmail().replace(".", ","); // Reconstruct key logic or store key
-                    // Actually, Child model doesn't have key field, assuming email can generate it or we fetch keys
-                    // Let's improve loadPatients to store keys.
-                    loadPatientData(childKey);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {
-                // ignore
-            }
-        });
+        // Note: The listener logic is also updated inside loadPatients to handle the dynamic keys
     }
 
     private void loadPatients() {
-        // In a real scenario, we'd filter by provider ID.
-        // For now, we'll list all "CHILD" role users for demonstration, 
-        // or we could assume the provider knows the child's ID.
-        // Simplified: Fetch all users, check if they are Child.
+        // To-Do 5: Filter patients by providerId
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 patientList.clear();
                 patientNames.clear();
-                // Create a list of keys to match the list order
                 final List<String> keys = new ArrayList<>();
 
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     Child child = childSnapshot.getValue(Child.class);
-                    // Check if it's a child (assuming UserRole.CHILD is "CHILD" or similar check)
-                    // Child extends User, let's assume logic holds.
+                    
+                    // Check if role is CHILD and if providerId matches current provider
                     if (child != null && "CHILD".equals(child.getRole())) {
-                         patientList.add(child);
-                         patientNames.add(child.getDisplayName());
-                         keys.add(childSnapshot.getKey());
+                        if (currentProviderId != null && currentProviderId.equals(child.getProviderId())) {
+                             patientList.add(child);
+                             patientNames.add(child.getDisplayName());
+                             keys.add(childSnapshot.getKey());
+                        }
                     }
                 }
                 
                 spinnerAdapter.notifyDataSetChanged();
                 
-                // Modify OnItemSelected to use the keys list from this scope or store keys in patientList wrapper
-                // Reworking setupPatientSpinner listener slightly:
+                if (patientList.isEmpty()) {
+                    Toast.makeText(ProviderHomeActivity.this, "No patients linked to your ID.", Toast.LENGTH_LONG).show();
+                } else {
+                    // Automatically load the first patient if available
+                    loadPatientData(keys.get(0));
+                }
+                
                 spinnerPatientSelector.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
@@ -208,8 +213,6 @@ public class ProviderHomeActivity extends AppCompatActivity {
         } else {
             cardZoneDistributionProvider.setVisibility(View.GONE);
         }
-        
-        // Reset text fields if hidden? Or just let visibility handle it.
     }
 
     private void loadRescueData(String childKey) {
