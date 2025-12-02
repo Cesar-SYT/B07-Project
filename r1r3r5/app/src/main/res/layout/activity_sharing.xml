@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sharing Settings"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <CheckBox
+        android:id="@+id/cbShareRescueLogs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share Rescue Logs"/>
+
+    <CheckBox
+        android:id="@+id/cbShareAdherence"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share Adherence"/>
+
+    <CheckBox
+        android:id="@+id/cbShareSymptoms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share Symptoms"/>
+
+    <CheckBox
+        android:id="@+id/cbShareTriggers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share Triggers"/>
+
+    <CheckBox
+        android:id="@+id/cbSharePEF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share PEF"/>
+
+    <CheckBox
+        android:id="@+id/cbShareTriage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share Triage"/>
+
+    <CheckBox
+        android:id="@+id/cbShareCharts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share Charts"/>
+
+    <Button
+        android:id="@+id/btnSaveSharing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>

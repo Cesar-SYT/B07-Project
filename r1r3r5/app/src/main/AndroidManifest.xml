@@ -38,6 +38,7 @@
         <activity android:name=".TriageDetail" />
         <activity android:name=".DisplayPEF" />
         <activity android:name=".ChildDetail" />
+        <activity android:name=".SharingActivity" />
 
     </application>
 
