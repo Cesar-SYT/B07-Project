@@ -54,7 +54,8 @@ public class ParentHomeActivity extends AppCompatActivity {
     private Button btnViewReportParent;
     private Button btnSharingSettingsParent;
     private Button btnSymptomCheckin;
-    private Button btnLinkProvider; // To-Do 3: New Button
+    private Button btnLinkProvider;
+    private TextView txtLinkedProvider;
     private String currentChildName = "Child";
     private String currentChildKey;
 
@@ -71,7 +72,7 @@ public class ParentHomeActivity extends AppCompatActivity {
         setupNotificationsRecycler();
         setupQuickActions();
         setupZoneCardListener();
-        setupLinkProviderButton(); // To-Do 3: Setup listener
+        setupLinkProviderButton();
 
         String nameFromIntent = getIntent().getStringExtra("childName");
         if (nameFromIntent != null && !nameFromIntent.isEmpty()) {
@@ -86,6 +87,11 @@ public class ParentHomeActivity extends AppCompatActivity {
             Intent intent = new Intent(ParentHomeActivity.this, ManageChildrenActivity.class);
             startActivity(intent);
         });
+        
+        // Listen for changes in linked provider
+        if (currentChildKey != null) {
+             listenForLinkedProvider();
+        }
     }
 
     private void initViews() {
@@ -105,10 +111,34 @@ public class ParentHomeActivity extends AppCompatActivity {
         btnViewReportParent = findViewById(R.id.btnViewReportParent);
         btnSharingSettingsParent = findViewById(R.id.btnSharingSettingsParent);
         btnSymptomCheckin = findViewById(R.id.btnSymptomCheckin);
-        btnLinkProvider = findViewById(R.id.btnLinkProvider); // To-Do 3: Initialize
+        btnLinkProvider = findViewById(R.id.btnLinkProvider);
+        txtLinkedProvider = findViewById(R.id.txtLinkedProvider);
+    }
+    
+    private void listenForLinkedProvider() {
+        DatabaseReference childRef = FirebaseDatabase.getInstance().getReference("users").child(currentChildKey);
+        childRef.child("providerId").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String providerId = snapshot.getValue(String.class);
+                if (providerId != null && !providerId.isEmpty()) {
+                    // Convert comma back to dot for display if it looks like an email
+                    String displayId = providerId.replace(",", ".");
+                    txtLinkedProvider.setText("Linked Doctor: " + displayId);
+                    txtLinkedProvider.setTextColor(Color.parseColor("#4CAF50")); // Green
+                } else {
+                    txtLinkedProvider.setText("Not linked to any doctor");
+                    txtLinkedProvider.setTextColor(Color.parseColor("#757575")); // Grey
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Ignore
+            }
+        });
     }
 
-    // To-Do 3: Implement Link Provider Logic
     private void setupLinkProviderButton() {
         btnLinkProvider.setOnClickListener(v -> showLinkProviderDialog());
     }
@@ -121,14 +151,17 @@ public class ParentHomeActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Link to Doctor");
-        builder.setMessage("Enter the Doctor's unique ID provided to you:");
+        builder.setMessage("Enter the Doctor's unique ID (email address usually):");
 
         final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         builder.setView(input);
 
         builder.setPositiveButton("Link", (dialog, which) -> {
-            String providerId = input.getText().toString().trim();
+            String rawInput = input.getText().toString().trim();
+            // FIX: Automatically convert email format (dots to commas) to match Firebase keys
+            String providerId = rawInput.replace(".", ",");
+            
             if (!providerId.isEmpty()) {
                 linkChildToProvider(providerId);
             }
@@ -139,7 +172,6 @@ public class ParentHomeActivity extends AppCompatActivity {
     }
 
     private void linkChildToProvider(String providerId) {
-        // Save the providerId to the child's node in Firebase
         DatabaseReference childRef = FirebaseDatabase.getInstance().getReference("users").child(currentChildKey);
         childRef.child("providerId").setValue(providerId)
                 .addOnSuccessListener(aVoid -> Toast.makeText(ParentHomeActivity.this, "Linked to Doctor successfully!", Toast.LENGTH_SHORT).show())

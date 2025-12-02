@@ -25,6 +25,11 @@ public abstract class User {
         return role;
     }
 
+    // FIX: Add setter for Firebase deserialization
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
     public String getDisplayName() {
         return displayName;
     }

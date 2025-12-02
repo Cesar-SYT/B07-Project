@@ -86,10 +86,21 @@
                 android:id="@+id/btnLinkProvider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="4dp"
                 android:backgroundTint="#4CAF50"
                 android:text="Link to Doctor (Enter ID)"
                 android:textColor="@android:color/white"/>
+
+            <!-- Added TextView to display linked provider -->
+            <TextView
+                android:id="@+id/txtLinkedProvider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Not linked to any doctor"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_marginBottom="12dp"/>
 
             <LinearLayout
                 android:id="@+id/cardZoneParent"
