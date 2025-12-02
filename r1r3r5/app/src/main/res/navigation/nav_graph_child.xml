@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_child"
+    app:startDestination="@id/symptomCheckinChildFragment">
+
+    <fragment
+        android:id="@+id/symptomCheckinChildFragment"
+        android:name="com.example.smartair.symptoms.SymptomCheckinChildFragment"
+        android:label="Child Check-in" >
+        <argument android:name="childKey" app:argType="string" android:defaultValue="@null" app:nullable="true"/>
+        <argument android:name="childName" app:argType="string" android:defaultValue="@null" app:nullable="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/symptomHistoryChildFragment"
+        android:name="com.example.smartair.symptoms.SymptomHistoryChildFragment"
+        android:label="Child History" >
+        <argument android:name="childKey" app:argType="string" android:defaultValue="@null" app:nullable="true"/>
+        <argument android:name="childName" app:argType="string" android:defaultValue="@null" app:nullable="true"/>
+    </fragment>
+
+</navigation>
