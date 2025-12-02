@@ -6,4 +6,11 @@
     </style>
 
     <style name="Theme.SmartAir" parent="Base.Theme.SmartAir" />
+
+    <!-- Explicit NoActionBar Theme for ChildHomeActivity -->
+    <style name="Theme.SmartAir.NoActionBar" parent="Theme.SmartAir">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

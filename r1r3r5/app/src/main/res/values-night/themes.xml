@@ -4,4 +4,11 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
+
+    <!-- Explicit NoActionBar Theme for ChildHomeActivity (Dark Mode) -->
+    <style name="Theme.SmartAir.NoActionBar" parent="Theme.SmartAir">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

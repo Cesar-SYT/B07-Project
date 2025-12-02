@@ -94,17 +94,16 @@ public class RegisterChildActivity extends AppCompatActivity {
                                     username,
                                     fullName
                             );
+                            
+                            // Store parent ID in child's node
+                            child.setParentId(parentUid);
+
                             FirebaseDatabase.getInstance("https://smart-air-61888-default-rtdb.firebaseio.com/")
                                     .getReference("users")
                                     .child(uid)                // ★ 孩子的 uid
                                     .setValue(child)
                                     .addOnCompleteListener(task1 -> {
                                         if (task1.isSuccessful()) {
-                                            FirebaseDatabase.getInstance("https://smart-air-61888-default-rtdb.firebaseio.com/")
-                                                    .getReference("users")
-                                                    .child(uid)
-                                                    .child("parentId")
-                                                    .setValue(parentUid);
                                             FirebaseDatabase.getInstance()
                                                     .getReference("users")
                                                     .child(parentUid)

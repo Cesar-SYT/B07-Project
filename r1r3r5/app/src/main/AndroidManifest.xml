@@ -27,14 +27,17 @@
         <activity android:name=".r3.InventoryActivity" />
         <activity android:name=".r3.MotivationActivity" />
         <activity android:name=".ParentHomeActivity"/>
-        <activity android:name=".ChildHomeActivity"/>
+        <!-- Explicitly set NoActionBar theme -->
+        <activity
+            android:name=".ChildHomeActivity"
+            android:theme="@style/Theme.SmartAir.NoActionBar" />
         <activity android:name=".ProviderHomeActivity" />
         <activity android:name=".r3.R3MainActivity" />
         <activity android:name=".ManageChildrenActivity" />
         <activity android:name=".RegisterChildActivity" />
-
-
-
+        <activity android:name=".TriageDetail" />
+        <activity android:name=".DisplayPEF" />
+        <activity android:name=".ChildDetail" />
 
     </application>
 
