@@ -62,6 +62,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             tools:entries="@array/dummy_children"/>
+            
+        <Button
+            android:id="@+id/btnLinkPatient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Link Patient via Code"
+            android:layout_marginTop="8dp"/>
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView

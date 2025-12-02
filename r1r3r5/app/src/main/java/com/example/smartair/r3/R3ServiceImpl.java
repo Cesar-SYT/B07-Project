@@ -267,11 +267,36 @@ public class R3ServiceImpl extends R3Service {
     @Override
     protected void handleRescueAlertsIfNeeded(Child child,
                                               MedicineLogEntry entry) {
-        // 这里先只打个 log 占位。
-        // 如果你在 R4 要实现 “短时间内多次使用 rescue” 的警报，
-        // 可以在这里读取最近几条记录做判断。
-        if (child != null) {
-            Log.d(TAG, "handleRescueAlertsIfNeeded: childId=" + child.getId());
+        if (child == null) return;
+
+        Log.d(TAG, "handleRescueAlertsIfNeeded: childId=" + child.getId());
+
+        // "Worse after dose" check
+        if ("Worse".equalsIgnoreCase(entry.getFeel())) {
+            sendAlert(child, "WORSE_AFTER_DOSE");
+        }
+    }
+
+    private void sendAlert(Child child, String type) {
+        String parentId = child.getParentId();
+        if (parentId == null || parentId.isEmpty()) {
+            Log.w(TAG, "sendAlert: parentId is missing for child " + child.getId());
+            return;
+        }
+
+        DatabaseReference alertsRef = rootRef.child("alerts").child(parentId);
+        String alertId = alertsRef.push().getKey();
+
+        if (alertId != null) {
+            Map<String, Object> alert = new HashMap<>();
+            alert.put("alertId", alertId);
+            alert.put("childKey", child.getId());
+            alert.put("childName", child.getDisplayName());
+            alert.put("type", type);
+            alert.put("timestamp", System.currentTimeMillis());
+            alert.put("status", "new");
+
+            alertsRef.child(alertId).setValue(alert);
         }
     }
 

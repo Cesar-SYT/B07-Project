@@ -1,6 +1,8 @@
 package com.example.smartair;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,10 +12,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -69,6 +73,8 @@ public class ProviderHomeActivity extends AppCompatActivity {
     private Button btnSignout;
 
     private DatabaseReference usersRef;
+    private DatabaseReference invitesRef;
+    
     private final List<Child> patientList = new ArrayList<>();
     private ArrayAdapter<String> spinnerAdapter;
     private final List<String> patientNames = new ArrayList<>();
@@ -89,6 +95,7 @@ public class ProviderHomeActivity extends AppCompatActivity {
         setContentView(R.layout.provider_page);
 
         usersRef = FirebaseDatabase.getInstance().getReference("users");
+        invitesRef = FirebaseDatabase.getInstance().getReference("invites");
         
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null && user.getEmail() != null) {
@@ -129,6 +136,78 @@ public class ProviderHomeActivity extends AppCompatActivity {
             startActivity(new Intent(ProviderHomeActivity.this, MainActivity.class));
             finish();
         });
+
+        Button btnLinkPatient = findViewById(R.id.btnLinkPatient);
+        if (btnLinkPatient != null) {
+            btnLinkPatient.setOnClickListener(v -> showLinkPatientDialog());
+        }
+    }
+
+    private void showLinkPatientDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Link Patient");
+
+        final EditText input = new EditText(this);
+        input.setHint("Enter Invite Code");
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+        builder.setView(input);
+
+        builder.setPositiveButton("Link", (dialog, which) -> {
+            String code = input.getText().toString().trim().toUpperCase();
+            if (!TextUtils.isEmpty(code)) {
+                verifyAndLinkPatient(code);
+            }
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    private void verifyAndLinkPatient(String code) {
+        invitesRef.child(code).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    Toast.makeText(ProviderHomeActivity.this, "Invalid Code", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Long timestamp = snapshot.child("timestamp").getValue(Long.class);
+                String childKey = snapshot.child("childKey").getValue(String.class);
+
+                if (timestamp == null || childKey == null) {
+                    Toast.makeText(ProviderHomeActivity.this, "Invalid Code Data", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                long expiry = timestamp + (7L * 24 * 60 * 60 * 1000); // 7 days
+                if (System.currentTimeMillis() > expiry) {
+                    Toast.makeText(ProviderHomeActivity.this, "Code Expired", Toast.LENGTH_SHORT).show();
+                } else {
+                    linkChildToProvider(childKey, code);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(ProviderHomeActivity.this, "Error verifying code", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void linkChildToProvider(String childKey, String code) {
+        usersRef.child(childKey).child("providerId").setValue(currentProviderId)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(ProviderHomeActivity.this, "Patient Linked Successfully!", Toast.LENGTH_SHORT).show();
+                    
+                    // Clean up invite code (One-time use)
+                    invitesRef.child(code).removeValue();
+                    usersRef.child(childKey).child("invite_code").removeValue();
+                    
+                    // Refresh patient list
+                    loadPatients();
+                })
+                .addOnFailureListener(e -> Toast.makeText(ProviderHomeActivity.this, "Failed to link patient", Toast.LENGTH_SHORT).show());
     }
 
     private void setupPatientSpinner() {

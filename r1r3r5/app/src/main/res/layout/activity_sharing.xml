@@ -23,7 +23,7 @@
         android:id="@+id/cbShareAdherence"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Share Adherence"/>
+        android.text="Share Adherence"/>
 
     <CheckBox
         android:id="@+id/cbShareSymptoms"
@@ -52,7 +52,7 @@
     <CheckBox
         android:id="@+id/cbShareCharts"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android.layout_height="wrap_content"
         android:text="Share Charts"/>
 
     <Button
@@ -61,5 +61,46 @@
         android:layout_height="wrap_content"
         android:text="Save"
         android:layout_marginTop="16dp"/>
+        
+    <!-- Invite Code Section -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Provider Invite Code"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/tvInviteCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No code generated."
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:background="#f0f0f0"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btnGenerateCode"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Generate New Code"/>
+
+        <Button
+            android:id="@+id/btnRevokeCode"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Revoke Code"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
 
 </LinearLayout>
