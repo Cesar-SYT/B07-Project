@@ -9,15 +9,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.smartair.R;
+import com.example.smartair.model.Child;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.example.smartair.model.Child;
 
 public class RegisterChildActivity extends AppCompatActivity {
 
@@ -25,28 +25,39 @@ public class RegisterChildActivity extends AppCompatActivity {
     private Button btnRegister;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference childrenRef;
+    private DatabaseReference usersRef; // 统一使用这个引用
+
+    // 显式指定数据库 URL，防止实例不一致
+    private static final String DATABASE_URL = "https://smart-air-61888-default-rtdb.firebaseio.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_register_child); // 使用你的 XML
+        setContentView(R.layout.fragment_register_child);
 
         // 绑定 UI
         etFullName = findViewById(R.id.edit_text_full_name);
-        etUsername = findViewById(R.id.edit_text_email);  // 这里改当 username 输入框
+        etUsername = findViewById(R.id.edit_text_email);
         etPassword = findViewById(R.id.edit_text_password);
         btnRegister = findViewById(R.id.button_submit_registration);
 
-        // Firebase
+        // Firebase 初始化
         mAuth = FirebaseAuth.getInstance();
-        childrenRef = FirebaseDatabase.getInstance().getReference("users");
+        // 统一使用带 URL 的实例，确保读写同一个库
+        usersRef = FirebaseDatabase.getInstance(DATABASE_URL).getReference("users");
 
         btnRegister.setOnClickListener(v -> registerChild());
     }
 
     private void registerChild() {
-        String parentUid = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".",",");
+        FirebaseUser parentUser = mAuth.getCurrentUser();
+        if (parentUser == null) {
+            Toast.makeText(this, "Parent not logged in!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // 提前获取父账号 ID，因为 createUser 后 mAuth 会切换到子账号
+        String parentUid = parentUser.getEmail().replace(".", ",");
 
         final String fullName = etFullName.getText().toString().trim();
         final String username = etUsername.getText().toString().trim();
@@ -81,34 +92,38 @@ public class RegisterChildActivity extends AppCompatActivity {
         }
 
         // Firebase Auth 注册
+        // 警告：成功后，当前 App 的登录状态会切换为新注册的孩子账号！
         mAuth.createUserWithEmailAndPassword(firebaseEmail, password)
                 .addOnCompleteListener(RegisterChildActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if (task.isSuccessful()) {
-                            String uid = task.getResult().getUser().getEmail().replace(".",",");
+                            FirebaseUser childUser = task.getResult().getUser();
+                            if (childUser == null) return;
+                            
+                            String uid = childUser.getEmail().replace(".", ",");
 
-                            // database 存孩子信息（不存 email）
+                            // database 存孩子信息
                             Child child = new Child(
                                     username,
                                     fullName
                             );
                             
-                            // Store parent ID in child's node
+                            // Store parent ID in child's node (Requires Child.java update)
                             child.setParentId(parentUid);
 
-                            FirebaseDatabase.getInstance("https://smart-air-61888-default-rtdb.firebaseio.com/")
-                                    .getReference("users")
-                                    .child(uid)                // ★ 孩子的 uid
+                            // 1. 写入孩子信息 (users -> childUid)
+                            usersRef.child(uid)
                                     .setValue(child)
                                     .addOnCompleteListener(task1 -> {
                                         if (task1.isSuccessful()) {
-                                            FirebaseDatabase.getInstance()
-                                                    .getReference("users")
-                                                    .child(parentUid)
+                                            // 2. 将孩子关联到父账号 (users -> parentUid -> childid -> childUid)
+                                            // 注意：如果 Security Rules 限制只能写自己的节点，这里可能会失败，
+                                            // 因为此时 Auth 已经是 Child 了。
+                                            usersRef.child(parentUid)
                                                     .child("childid")
-                                                    .child(uid)     // ★ 每个 child 一个 key
+                                                    .child(uid)
                                                     .setValue(true)
                                                     .addOnCompleteListener(task2 -> {
                                                         if (task2.isSuccessful()) {
@@ -117,27 +132,26 @@ public class RegisterChildActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT).show();
                                                             finish();
                                                         } else {
+                                                            String error = task2.getException() != null ? task2.getException().getMessage() : "Unknown error";
                                                             Toast.makeText(RegisterChildActivity.this,
-                                                                    "Failed to link child to parent: " +
-                                                                            task2.getException().getMessage(),
+                                                                    "Failed to link child to parent: " + error,
                                                                     Toast.LENGTH_LONG).show();
                                                         }
                                                     });
                                         } else {
+                                            String error = task1.getException() != null ? task1.getException().getMessage() : "Unknown error";
                                             Toast.makeText(RegisterChildActivity.this,
-                                                    "Database error: " +
-                                                            task1.getException().getMessage(),
+                                                    "Database error: " + error,
                                                     Toast.LENGTH_LONG).show();
                                         }
                                     });
                         } else {
+                            String error = task.getException() != null ? task.getException().getMessage() : "Unknown error";
                             Toast.makeText(RegisterChildActivity.this,
-                                    "Auth error: " + task.getException().getMessage(),
+                                    "Auth error: " + error,
                                     Toast.LENGTH_LONG).show();
                         }
                     }
                 });
     }
-
-    // 孩子数据结构
 }

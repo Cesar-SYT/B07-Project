@@ -34,20 +34,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * ParentHomeActivity
- *
- * 家长端首页 Dashboard：
- * - 选择当前查看的 Child
- * - 显示今日 Zone
- * - Rescue / Controller 用药概览
- * - 最近 7/30 天趋势（现在只是占位）
- * - 通知列表
- * - 快速操作按钮（Add Log / Report / Sharing）
- */
 public class ParentHomeActivity extends AppCompatActivity {
 
-    // ... (existing declarations)
     private ConstraintLayout rootLayout;
     private TextView txtParentTitle;
     private TextView txtCurrentChildName;
@@ -61,7 +49,7 @@ public class ParentHomeActivity extends AppCompatActivity {
     private RadioGroup rgTrendRange;
     private RecyclerView rvNotifications;
     private NotificationAdapter notificationAdapter;
-    private final List<Object> notificationItems = new ArrayList<>(); // Use Object to hold both Alerts and Notifications
+    private final List<Object> notificationItems = new ArrayList<>();
     private Button btnAddLogParent;
     private Button btnViewReportParent;
     private Button btnSharingSettingsParent;
@@ -157,7 +145,10 @@ public class ParentHomeActivity extends AppCompatActivity {
         });
 
         btnSharingSettingsParent.setOnClickListener(v -> {
-            Toast.makeText(this, "Sharing settings not yet implemented", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(ParentHomeActivity.this, SharingActivity.class);
+            intent.putExtra("childKey", currentChildKey);
+            intent.putExtra("childName", currentChildName);
+            startActivity(intent);
         });
         
         btnSymptomCheckin.setOnClickListener(v -> {
