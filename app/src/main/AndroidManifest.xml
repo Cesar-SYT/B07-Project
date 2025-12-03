@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -21,6 +22,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".r3.RecordsActivity" />
+        <activity android:name=".r3.TechniqueHelperActivity" />
+        <activity android:name=".r3.InventoryActivity" />
+        <activity android:name=".r3.MotivationActivity" />
+        <activity android:name=".ParentHomeActivity"/>
+        <activity android:name=".ChildHomeActivity"/>
+        <activity android:name=".ProviderHomeActivity" />
+        <activity android:name=".r3.R3MainActivity" />
+        <activity android:name=".ManageChildrenActivity" />
+        <activity android:name=".RegisterChildActivity" />
+        <activity android:name=".TriageDetail" />
+        <activity android:name=".DisplayPEF" />
+        <activity android:name=".ChildDetail" />
+        <activity android:name=".SharingActivity" />
+
+
+
+
     </application>
 
 </manifest>
