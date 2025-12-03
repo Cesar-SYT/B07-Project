@@ -239,8 +239,13 @@ public class ChildHomeActivity extends AppCompatActivity {
                             // Dynamically set graph if start destination is empty
                             navController.setGraph(R.navigation.nav_graph_child);
                         } catch (Exception e) {
-                            // Graph might be already set
+                            e.printStackTrace();
                         }
+                        Bundle args = new Bundle();
+                        args.putString("childKey", getCurrentChildKey());
+                        args.putString("childName", name);
+
+                        navController.navigate(R.id.symptomCheckinChildFragment, args);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
