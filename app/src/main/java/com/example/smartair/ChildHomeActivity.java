@@ -103,7 +103,7 @@ public class ChildHomeActivity extends AppCompatActivity {
                         }
                         return;
                     }
-                    setEnabled(false);  
+                    setEnabled(false);
                     ChildHomeActivity.super.onBackPressed();
                 }
             }

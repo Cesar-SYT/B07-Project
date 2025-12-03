@@ -784,15 +784,6 @@ public class ParentHomeActivity extends AppCompatActivity {
     }
 
 
-    static class Alert {
-
-        String getStatus() { return "new"; }
-        String getChildName() { return "Child"; }
-        long getTimestamp() { return System.currentTimeMillis(); }
-    }
-
-
-
     static class NotificationViewHolder extends RecyclerView.ViewHolder {
         TextView txtTitle;
         TextView txtMessage;
