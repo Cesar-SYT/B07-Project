@@ -101,11 +101,9 @@ public class ChildHomeActivity extends AppCompatActivity {
                         if (btnMenu != null) {
                             btnMenu.setVisibility(View.VISIBLE);
                         }
-                        // 不调用 super，相当于“拦截”系统默认返回
                         return;
                     }
-                    // 走默认的返回行为（关闭 Activity）
-                    setEnabled(false);  // 先把这个 callback 关掉避免递归
+                    setEnabled(false);  
                     ChildHomeActivity.super.onBackPressed();
                 }
             }
